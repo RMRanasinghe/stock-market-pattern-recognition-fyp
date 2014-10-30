@@ -8,6 +8,10 @@ public class Helper {
 	
 	private int bw = 0;    //bandwith
 	
+	private double Q = 0.000001;
+    private double R = 0.0001;
+    private double P = 1, X = 0, K;
+	
 	public Double max(Queue<Double> s){
 		Iterator<Double> itr = s.iterator();
 		Double m= Double.MIN_VALUE;
@@ -72,5 +76,29 @@ public class Helper {
 		
 		return output;
 	}
+	
+	
+//Kalman filter
+    private void measurementUpdate(){
+        K = (P + Q) / (P + Q + R);
+        P = R * (P + Q) / (R + P + Q);
+    }
+
+    public double update(double measurement){
+        measurementUpdate();
+        double result = X + (measurement - X) * K;
+        X = result;
+
+        return result;
+    }
+
+    public double[] kalmanFilter(double[] input){
+        double[] dataInput = input;
+        double[] dataOutput = new double[input.length];
+        for(int i=0;i< input.length;i++){
+            dataOutput[i]=Math.round(update(dataInput[i])*100.0)/100.0;
+        }
+        return dataOutput;
+    }
 
 }
