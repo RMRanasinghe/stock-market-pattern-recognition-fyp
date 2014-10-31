@@ -135,12 +135,15 @@ public class Helper {
         return result;
     }
 
-    public double[] kalmanFilter(double[] input){
-        double[] dataInput = input;
-        double[] dataOutput = new double[input.length];
-        for(int i=0;i< input.length;i++){
-            dataOutput[i]=Math.round(update(dataInput[i])*100.0)/100.0;
+    public Queue<Double> kalmanFilter(Queue<Double> input){
+        Queue<Double> dataInput = input;
+        Queue<Double> dataOutput =new LinkedList<Double>();
+        Kalman filter = new Kalman();
+        int size =dataInput.size();
+        for(int i=0;i< size;i++){
+            dataOutput.add(Math.round(filter.update(dataInput.remove())*100.0)/100.0);
         }
+
         return dataOutput;
     }
 
