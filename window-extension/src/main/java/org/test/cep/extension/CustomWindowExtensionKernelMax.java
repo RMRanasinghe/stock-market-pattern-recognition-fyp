@@ -30,17 +30,15 @@ import org.wso2.siddhi.query.api.extension.annotation.SiddhiExtension;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Queue;
 
-@SiddhiExtension(namespace = "custom", function = "ruleMax")
-public class CustomWindowExtensionMax extends WindowProcessor {
+@SiddhiExtension(namespace = "custom", function = "kernelMax")
+public class CustomWindowExtensionKernelMax extends WindowProcessor {
 
 	String variable = "";
 	int variablePosition = 0;
-	int bwl = 0;
-	int bwr = 0;
-	Map<Object, InEvent> uniqueWindow = null;
+	int bw = 0;
+	int window = 0;
 	Queue<InEvent> eventStack = null;
 	Queue<Double> priceStack = null;
 
@@ -93,7 +91,7 @@ public class CustomWindowExtensionMax extends WindowProcessor {
 	 * This method used to return the current state of the window, Used for persistence of data
 	 */
 	protected Object[] currentState() {
-		return new Object[] { uniqueWindow };
+		return new Object[] { eventStack };
 	}
 
 	@Override
@@ -112,12 +110,12 @@ public class CustomWindowExtensionMax extends WindowProcessor {
 			AbstractDefinition abstractDefinition, String s, boolean b,
 			SiddhiContext siddhiContext) {
 
-		if (expressions.length != 3) {
+		if (expressions.length != 3) {//price variable name, bandwidth, window size
 			log.error("Parameters count is not matching, There should be two parameters ");
 		}
 		variable = ((Variable) expressions[0]).getAttributeName();
-		bwl = ((IntConstant) expressions[1]).getValue();
-		bwr = ((IntConstant) expressions[2]).getValue();
+		bw = ((IntConstant) expressions[1]).getValue();
+		window = ((IntConstant) expressions[2]).getValue();
 		
 		eventStack = new LinkedList<InEvent>();
 		priceStack = new LinkedList<Double>();
@@ -129,17 +127,18 @@ public class CustomWindowExtensionMax extends WindowProcessor {
 		Double eventKey = (Double)event.getData(variablePosition);
 		Helper helper = new Helper();
 		//log.info(eventKey+10000);
-		if(eventStack.size()< (bwl+bwr)){
+		if(eventStack.size()< window){
 			eventStack.add(event);
 			priceStack.add(eventKey);
 		}
 		else{
 			eventStack.add(event);
 			priceStack.add(eventKey);
-			//TODO:Double equivalence check
-			if(helper.max(priceStack)==priceStack.toArray()[bwl]){
-				nextProcessor.process((InEvent)eventStack.toArray()[bwl]);
-			}
+			
+			//TODO:processing
+			Queue<Double> output = helper.smooth(priceStack, bw);
+			
+			
 			eventStack.remove();
 			priceStack.remove();
 			

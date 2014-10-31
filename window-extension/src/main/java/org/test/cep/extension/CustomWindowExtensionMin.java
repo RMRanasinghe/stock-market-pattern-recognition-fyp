@@ -136,6 +136,7 @@ public class CustomWindowExtensionMin extends WindowProcessor {
 		else{
 			eventStack.add(event);
 			priceStack.add(eventKey);
+			//TODO:Double equivalence check
 			if(helper.min(priceStack)==priceStack.toArray()[bwl]){
 				nextProcessor.process((InEvent)eventStack.toArray()[bwl]);
 			}
