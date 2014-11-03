@@ -41,6 +41,7 @@ public class CustomWindowExtensionKernelMax extends WindowProcessor {
 	int window = 0;
 	Queue<InEvent> eventStack = null;
 	Queue<Double> priceStack = null;
+	Queue<InEvent> uniqueQueue = null;
 
 	@Override
 	/**
@@ -119,6 +120,7 @@ public class CustomWindowExtensionKernelMax extends WindowProcessor {
 		
 		eventStack = new LinkedList<InEvent>();
 		priceStack = new LinkedList<Double>();
+		uniqueQueue = new LinkedList<InEvent>();
 		variablePosition = abstractDefinition.getAttributePosition(variable);
 		
 	}
@@ -126,7 +128,7 @@ public class CustomWindowExtensionKernelMax extends WindowProcessor {
 	private void doProcessing(InEvent event) {
 		Double eventKey = (Double)event.getData(variablePosition);
 		Helper helper = new Helper();
-		//log.info(eventKey+10000);
+		
 		if(eventStack.size()< window){
 			eventStack.add(event);
 			priceStack.add(eventKey);
@@ -135,15 +137,31 @@ public class CustomWindowExtensionKernelMax extends WindowProcessor {
 			eventStack.add(event);
 			priceStack.add(eventKey);
 			
-			//TODO:processing
 			Queue<Double> output = helper.smooth(priceStack, bw);
-			
-			
+			//TODO:remove hard coded values
+			Integer maxPos = helper.findMax(output, 5);
+			if(maxPos!=null){
+				//TODO:remove hard coded values
+				Integer maxPosEvnt = helper.findMax(priceStack,10);
+				if(maxPosEvnt!=null){
+					InEvent maximumEvent = (InEvent)eventStack.toArray()[maxPosEvnt];
+					if(!uniqueQueue.contains(maximumEvent)){
+						//TODO:remove hard coded values
+						if(uniqueQueue.size()>5){
+							uniqueQueue.remove();
+						}
+						uniqueQueue.add(maximumEvent);
+						nextProcessor.process(maximumEvent);
+						
+					}
+				}
+
+				
+			}			
 			eventStack.remove();
 			priceStack.remove();
 			
 		}
-		//nextProcessor.process(event);
 
 	}
 
