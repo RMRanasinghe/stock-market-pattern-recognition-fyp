@@ -120,6 +120,41 @@ public class Helper {
 		}
 		return null;
 	}
+	
+
+	public int maxIndex(Queue<Double> s) {
+		Iterator<Double> itr = s.iterator();
+		Double m = Double.MIN_VALUE;
+		int index = 0;
+		int i = 0;
+		while (itr.hasNext()) {
+			Double nxt = itr.next();
+			if (m < nxt) {
+				m = nxt;
+				index = i;
+			}
+			++i;
+		}
+		// log.info(m);
+		return index;
+	}
+
+	public int minIndex(Queue<Double> s) {
+		Iterator<Double> itr = s.iterator();
+		Double m = Double.MAX_VALUE;
+		int index = 0;
+		int i = 0;
+		while (itr.hasNext()) {
+			Double nxt = itr.next();
+			if (m > nxt) {
+				m = nxt;
+				index = i;
+			}
+			++i;
+		}
+		// log.info(m);
+		return index;
+	}
 
 //Kalman filter
     private void measurementUpdate(){
@@ -138,11 +173,11 @@ public class Helper {
     public Queue<Double> kalmanFilter(Queue<Double> input){
         Queue<Double> dataInput = input;
         Queue<Double> dataOutput =new LinkedList<Double>();
-        Kalman filter = new Kalman();
-        int size =dataInput.size();
-        for(int i=0;i< size;i++){
-            dataOutput.add(Math.round(filter.update(dataInput.remove())*100.0)/100.0);
-        }
+//        Kalman filter = new Kalman();
+//        int size =dataInput.size();
+//        for(int i=0;i< size;i++){
+//            dataOutput.add(Math.round(filter.update(dataInput.remove())*100.0)/100.0);
+//        }
 
         return dataOutput;
     }
