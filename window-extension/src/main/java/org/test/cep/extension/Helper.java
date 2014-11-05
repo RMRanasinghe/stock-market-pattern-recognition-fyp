@@ -121,7 +121,11 @@ public class Helper {
 		return null;
 	}
 	
-
+/**
+ *
+ * @param s Queue
+ * @return Index of the position of where the maximum value contains
+ */
 	public int maxIndex(Queue<Double> s) {
 		Iterator<Double> itr = s.iterator();
 		Double m = Double.MIN_VALUE;
@@ -138,7 +142,11 @@ public class Helper {
 		// log.info(m);
 		return index;
 	}
-
+/**
+ * 
+ * @param s Queue
+ * @return minimum index
+ */
 	public int minIndex(Queue<Double> s) {
 		Iterator<Double> itr = s.iterator();
 		Double m = Double.MAX_VALUE;
