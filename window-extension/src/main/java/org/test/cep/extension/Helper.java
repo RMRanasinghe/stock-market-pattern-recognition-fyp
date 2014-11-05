@@ -105,7 +105,7 @@ public class Helper {
 	public Integer findMax(Queue<Double> input, int bandwidth){
 		int size = input.size();
 		Object[] inputArray = input.toArray();
-		for(int i = bandwidth;i<(size-bandwidth);++i){
+		for(int i = (size-bandwidth)-1;i>=bandwidth;--i){
 			Double max = Double.MIN_VALUE;
 			for(int j=i-bandwidth;j<=i+bandwidth;++j){
 				if((Double)inputArray[j]>max){

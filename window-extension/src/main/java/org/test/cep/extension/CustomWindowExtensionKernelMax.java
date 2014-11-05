@@ -139,7 +139,7 @@ public class CustomWindowExtensionKernelMax extends WindowProcessor {
 			
 			Queue<Double> output = helper.smooth(priceStack, bw);
 			//TODO:remove hard coded values
-			Integer maxPos = helper.findMax(output, 5);
+			Integer maxPos = helper.findMax(output, 2);
 			if(maxPos!=null){
 				//TODO:remove hard coded values
 				Integer maxPosEvnt = helper.findMax(priceStack,10);
