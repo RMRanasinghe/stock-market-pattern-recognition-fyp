@@ -1,0 +1,52 @@
+findpeaks <- function(vec,bwl=1,bwr=1,x.coo=c(1:length(vec)))
+{
+	pos.x.max <- NULL
+	pos.y.max <- NULL
+	pos.x.min <- NULL
+	pos.y.min <- NULL
+ 	for(i in 1:(length(vec)-1))
+ 	{
+ 		if((i+1+bwr)>length(vec)){
+                sup.stop <- length(vec)}else{sup.stop <- i+1+bwr
+                }
+
+		if((i-bwl)<1){inf.stop <- 1}else{inf.stop <- i-bwl}
+
+		subset.sup <- vec[(i+1):sup.stop]
+		subset.inf <- vec[inf.stop:(i-1)]
+
+		is.max   <- sum(subset.inf > vec[i]) == 0
+		is.nomin <- sum(subset.sup > vec[i]) == 0
+
+		no.max   <- sum(subset.inf > vec[i]) == length(subset.inf)
+		no.nomin <- sum(subset.sup > vec[i]) == length(subset.sup)
+
+		if(is.max & is.nomin){
+			pos.x.max <- c(pos.x.max,x.coo[i])
+			pos.y.max <- c(pos.y.max,vec[i])
+		}
+
+		if(no.max & no.nomin){
+			pos.x.min <- c(pos.x.min,x.coo[i])
+			pos.y.min <- c(pos.y.min,vec[i])
+		}
+	}
+	return(list(pos.x.max,pos.y.max,pos.x.min,pos.y.min))
+}
+
+
+plot_peaks <- function(vec,bwL=1,bwR=1)
+{
+	plot(vec,type='l')
+	zz = findpeaks(vec,bwl=bwL,bwr=bwR)
+	points(zz[[1]],zz[[2]],pch = 21,lwd=3,cex=.4)
+	points(zz[[3]],zz[[4]],pch = 21,lwd=3,cex=.4)
+}
+
+
+gKernel <- function(x,bw)
+{
+return(2.718281828459045^((-(x^2))/(2*(bw^2))))/(2.5066282746310002*bw)
+}
+
+
