@@ -1,0 +1,347 @@
+Signature-Version: 1.0
+Created-By: 1.6.0-beta2 (Sun Microsystems Inc.)
+SHA1-Digest-Manifest-Main-Attributes: yOPhH4lVMjZA/uLV1zctnOScPl4=
+SHA1-Digest-Manifest: olN0mmE0ZobtLPcU1pefXI8aVfg=
+
+Name: be/ac/ulg/montefiore/run/jahmm/Hmm.class
+SHA1-Digest: Yv4K8cERIK/wmcWfgW5xbLgxwIc=
+
+Name: be/ac/ulg/montefiore/run/distributions/DiscreteDistribution.clas
+ s
+SHA1-Digest: SC6FQKozCm/66QlUzGLQdvJFGvQ=
+
+Name: be/ac/ulg/montefiore/run/jahmm/CentroidObservationInteger.class
+SHA1-Digest: RqUVPXPj41pMarLhJvYlo3zUnbc=
+
+Name: be/ac/ulg/montefiore/run/jahmm/apps/cli/GenerateActionHandler.cl
+ ass
+SHA1-Digest: hIkqiue0dEuw1pdQqZMJ2J3yfIU=
+
+Name: be/ac/ulg/montefiore/run/jahmm/apps/cli/Cli.class
+SHA1-Digest: KQH2y+YZmiy1Aq5juRhAiUvEQl0=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/ObservationSequencesReader.cla
+ ss
+SHA1-Digest: vsV9VjAHbWLdZ06P0UKD7DjyL5w=
+
+Name: be/ac/ulg/montefiore/run/jahmm/OpdfDiscreteFactory.class
+SHA1-Digest: vlwAay/KvJVutQ++s3ih8iYtXZw=
+
+Name: be/ac/ulg/montefiore/run/jahmm/learn/KMeansLearner.class
+SHA1-Digest: SkyS6WJRDLO8bH7e9ADk2NJWTZ4=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/ObservationReader.class
+SHA1-Digest: I/qwbxybKEvR/0eBUX0WdwbCPNM=
+
+Name: be/ac/ulg/montefiore/run/jahmm/package.html
+SHA1-Digest: FBqR8QHpg35Mgw6D76aaJHfSCbM=
+
+Name: be/ac/ulg/montefiore/run/jahmm/apps/cli/KMeansActionHandler.clas
+ s
+SHA1-Digest: kWq88+x23b0bVCAYbkxlAJX7IVo=
+
+Name: be/ac/ulg/montefiore/run/jahmm/apps/cli/PrintActionHandler.class
+SHA1-Digest: mJ37dzZ4nnelSLGzhUwzT7Wa6IY=
+
+Name: be/ac/ulg/montefiore/run/jahmm/test/LearnerTest.class
+SHA1-Digest: vyi5jzatCOg3XzbGrUhoeVPYJlM=
+
+Name: be/ac/ulg/montefiore/run/jahmm/test/SimpleExample.class
+SHA1-Digest: aqx+w+4YciPuiAsqGDqFyIVT2uQ=
+
+Name: be/ac/ulg/montefiore/run/jahmm/toolbox/MarkovGenerator.class
+SHA1-Digest: yO8d6lG4lplwY7nuege9aR1h9Os=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/ObservationVectorWriter.class
+SHA1-Digest: sR1bDb7NuUTJDiHy6tx4hic/MVo=
+
+Name: be/ac/ulg/montefiore/run/jahmm/OpdfIntegerFactory.class
+SHA1-Digest: WBGd8NgkynjihOiZinZLbF3weE8=
+
+Name: be/ac/ulg/montefiore/run/jahmm/OpdfGaussianMixture.class
+SHA1-Digest: 0mXZpHAxnQujGZS+iYSdZmwEj3I=
+
+Name: be/ac/ulg/montefiore/run/jahmm/OpdfGaussian.class
+SHA1-Digest: xKc/sArQxtbJWRRYUgStOYts6wY=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/OpdfIntegerReader.class
+SHA1-Digest: V5039t7svFcmG+SA3gPDMLXu9Uk=
+
+Name: be/ac/ulg/montefiore/run/jahmm/test/IOTest.class
+SHA1-Digest: IpYv1zVtuuq9qifsy6cgxk/TLd8=
+
+Name: be/ac/ulg/montefiore/run/jahmm/apps/cli/CommandLineArguments.cla
+ ss
+SHA1-Digest: K4D4COdN3oU4HbpZpxyh55whZ/I=
+
+Name: be/ac/ulg/montefiore/run/jahmm/learn/BaumWelchLearner.class
+SHA1-Digest: U2Y7izk9hySr/01ssOE7NxzPWlo=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/OpdfGaussianMixtureReader.clas
+ s
+SHA1-Digest: ujWHr4WVueywAk1MlCQ40y3n9Yw=
+
+Name: be/ac/ulg/montefiore/run/distributions/MultiRandomDistribution.c
+ lass
+SHA1-Digest: en7UKUrwPNNzVwWwIeycEtwzLCY=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/OpdfMultiGaussianWriter.class
+SHA1-Digest: rHQk57hs76IGnrF0PvDiu/ykK9A=
+
+Name: be/ac/ulg/montefiore/run/jahmm/test/SimpleExample$Packet.class
+SHA1-Digest: JqCq542Wj0RwR1xvmREY3Afn63o=
+
+Name: be/ac/ulg/montefiore/run/jahmm/CentroidObservationReal.class
+SHA1-Digest: QpGNaDGpyAAw1N6Rn7iCofGh3qw=
+
+Name: be/ac/ulg/montefiore/run/jahmm/learn/package.html
+SHA1-Digest: KzS0hgpxM9WVTgsMHSqelmM+bbk=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/package.html
+SHA1-Digest: YJFi1Gzrl3ZmGqSMYimC98X9OYI=
+
+Name: be/ac/ulg/montefiore/run/distributions/GaussianMixtureDistributi
+ on.class
+SHA1-Digest: Ka+uAP4sxkSBjzJ38p5Sx8ceJgs=
+
+Name: be/ac/ulg/montefiore/run/distributions/GaussianDistribution.clas
+ s
+SHA1-Digest: PXTM2J+UBhmR+hUU3WcHATR3guA=
+
+Name: be/ac/ulg/montefiore/run/jahmm/apps/cli/RealRelatedObjects.class
+SHA1-Digest: aIHvKp2JxH5O/UxMyfV1Mx1lnC0=
+
+Name: be/ac/ulg/montefiore/run/distributions/RandomDistribution.class
+SHA1-Digest: Mr7YDk6QWIKR06JmZjQ5iUFd5Is=
+
+Name: be/ac/ulg/montefiore/run/jahmm/KMeansCalculator$Cluster.class
+SHA1-Digest: B/gpYGbbkj2wm3VCigzjtWNjJJk=
+
+Name: be/ac/ulg/montefiore/run/jahmm/apps/cli/RelatedObjs.class
+SHA1-Digest: Y3EXCUSGzxeNsSKxC9AGJx2FmuY=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/HmmBinaryWriter.class
+SHA1-Digest: f8Hqq5gZTRfxJTUftHYSqmsUqGk=
+
+Name: be/ac/ulg/montefiore/run/jahmm/apps/cli/KLActionHandler.class
+SHA1-Digest: F685OkU3SOe5AA1ObOMMgFCOBvI=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/OpdfWriter.class
+SHA1-Digest: JcOh+Lk5qLrKtWBFfedKl8GMaXE=
+
+Name: be/ac/ulg/montefiore/run/jahmm/ForwardBackwardCalculator$Computa
+ tion.class
+SHA1-Digest: q2Upvw/XIDnMvP3etvwv3dGYW/0=
+
+Name: be/ac/ulg/montefiore/run/jahmm/toolbox/KullbackLeiblerDistanceCa
+ lculator.class
+SHA1-Digest: yzufVoISHbKkiuTcZCtaQIQN3kI=
+
+Name: be/ac/ulg/montefiore/run/jahmm/Opdf.class
+SHA1-Digest: BS8mkN3lT1sWUSFwh0YIJnvjsnI=
+
+Name: be/ac/ulg/montefiore/run/jahmm/draw/package.html
+SHA1-Digest: wo/chxcKZwkklh8ruYq74X0i+a8=
+
+Name: be/ac/ulg/montefiore/run/jahmm/learn/Clusters.class
+SHA1-Digest: O3RfW2UMNsVwM3r+oupF2U8LojA=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/OpdfGaussianWriter.class
+SHA1-Digest: W+9MI14yLO3QWlUyXzWx/wQuOSw=
+
+Name: be/ac/ulg/montefiore/run/jahmm/test/BasicIntegerTest.class
+SHA1-Digest: +x65JCDsLgyjG5xAoqyv3aULi6I=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/OpdfGaussianMixtureWriter.clas
+ s
+SHA1-Digest: XQ+PdhqCpb0HtvkqO1PbqZ7b4h4=
+
+Name: be/ac/ulg/montefiore/run/jahmm/toolbox/package.html
+SHA1-Digest: VYe5YWO4SSW3B1xJg5Zao41CTlM=
+
+Name: be/ac/ulg/montefiore/run/jahmm/apps/cli/BWActionHandler.class
+SHA1-Digest: +KbSfhdwSDTXecx7jfhqw4NTncY=
+
+Name: be/ac/ulg/montefiore/run/jahmm/KMeansCalculator.class
+SHA1-Digest: xqp1/fmfaJ4XyT3Gl8xyx1yeejs=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/ObservationIntegerReader.class
+SHA1-Digest: rZzXa6DgimaaUugyhxpJnT1slj8=
+
+Name: be/ac/ulg/montefiore/run/jahmm/OpdfMultiGaussian.class
+SHA1-Digest: GuIfOso1qX/UEYPFxPG5d3j7mvk=
+
+Name: be/ac/ulg/montefiore/run/jahmm/ObservationInteger.class
+SHA1-Digest: h/jGGrEgb9fgbLx3f/bnQCFv8X8=
+
+Name: be/ac/ulg/montefiore/run/jahmm/apps/cli/HelpActionHandler.class
+SHA1-Digest: AISpxLdcWGnIFo3mIqgFowNj6Jk=
+
+Name: be/ac/ulg/montefiore/run/jahmm/apps/cli/ActionHandler.class
+SHA1-Digest: P19xe60HpjcLKXiQSjMVU6ar0XU=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/HmmReader.class
+SHA1-Digest: BLvo4S334J7d9lx5ZIiqncSsYCU=
+
+Name: be/ac/ulg/montefiore/run/jahmm/apps/cli/VectorRelatedObjects.cla
+ ss
+SHA1-Digest: Dab2bQIT9+axZlrDAJsO/Ewgbz4=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/HmmBinaryReader.class
+SHA1-Digest: xxCTAM6shUb6sd/n+NtUFUyAKmo=
+
+Name: be/ac/ulg/montefiore/run/distributions/PoissonDistribution.class
+SHA1-Digest: KabEY3HhwAFLEEGHHOY9lbbCczo=
+
+Name: be/ac/ulg/montefiore/run/distributions/MultiGaussianDistribution
+ .class
+SHA1-Digest: SMF4kiPZJ6WoN3M7LIxcVTxV7Dw=
+
+Name: be/ac/ulg/montefiore/run/jahmm/apps/cli/AbnormalTerminationExcep
+ tion.class
+SHA1-Digest: QLuV5De4vzqyBoBqpipJl+BNVSM=
+
+Name: be/ac/ulg/montefiore/run/jahmm/Centroid.class
+SHA1-Digest: v1HtPd+aSOp/KyOZbNClwTKxldw=
+
+Name: be/ac/ulg/montefiore/run/jahmm/learn/Clusters$Value.class
+SHA1-Digest: IfKnU83oGjQRwBM1DtqS3EbEvSs=
+
+Name: be/ac/ulg/montefiore/run/jahmm/apps/cli/IntegerRelatedObjects.cl
+ ass
+SHA1-Digest: oOFVah0zd8jCbZv8DfFpVbOTWIc=
+
+Name: be/ac/ulg/montefiore/run/jahmm/OpdfFactory.class
+SHA1-Digest: LbQd5QHtEQT5/ozQIlMeR/2sWBk=
+
+Name: be/ac/ulg/montefiore/run/jahmm/ObservationDiscrete.class
+SHA1-Digest: Xtg30aLfiy5eW3t+quVVe5dafdk=
+
+Name: be/ac/ulg/montefiore/run/jahmm/OpdfGaussianMixtureFactory.class
+SHA1-Digest: aQ+cv3WrH5/XLdRgKlAqDX9zS0M=
+
+Name: be/ac/ulg/montefiore/run/jahmm/OpdfMultiGaussianFactory.class
+SHA1-Digest: NJBk9CxOxxLP+HEsnt5WpgfummA=
+
+Name: be/ac/ulg/montefiore/run/jahmm/apps/cli/WrongArgumentsException.
+ class
+SHA1-Digest: x1oUhaHs7Mx8o6E9cE5KL+LrGKc=
+
+Name: be/ac/ulg/montefiore/run/jahmm/ForwardBackwardCalculator.class
+SHA1-Digest: 30EFwHB2Au/OKAARhjZ8x3SmDoY=
+
+Name: be/ac/ulg/montefiore/run/jahmm/OpdfInteger.class
+SHA1-Digest: NI8ZbtpfwlzcLNxjBd2pRRpO9nE=
+
+Name: be/ac/ulg/montefiore/run/jahmm/ViterbiCalculator.class
+SHA1-Digest: g+A3Es0wmRlmpM7Ds8lIdZmUNEw=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/OpdfIntegerWriter.class
+SHA1-Digest: FnTM3lAzbtHXjlceZpB5Tddb9nw=
+
+Name: be/ac/ulg/montefiore/run/jahmm/Observation.class
+SHA1-Digest: Yl9Of4eeHsylAIwzyZPivkikeBE=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/ObservationWriter.class
+SHA1-Digest: y4lhxL5w/k478FqumgD+o1ApkP8=
+
+Name: be/ac/ulg/montefiore/run/jahmm/ForwardBackwardScaledCalculator.c
+ lass
+SHA1-Digest: ildsffPiP681i+tSgDU/gzWN+Co=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/OpdfGenericReader.class
+SHA1-Digest: snwtgR2ZR137nJAPxunKsNlzmxU=
+
+Name: be/ac/ulg/montefiore/run/jahmm/OpdfDiscrete.class
+SHA1-Digest: yC8RLhBb/6QnWk1WeiGJl53EC+c=
+
+Name: be/ac/ulg/montefiore/run/jahmm/CentroidObservationVector.class
+SHA1-Digest: A/Tyar0BlNQyF8Zo7fsC6bNUchc=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/ObservationRealReader.class
+SHA1-Digest: 0z5bLufukEVUsoPfqlXAf4/ZD4E=
+
+Name: be/ac/ulg/montefiore/run/jahmm/apps/cli/CreateActionHandler.clas
+ s
+SHA1-Digest: DVNnJOkFNXw6WL9cxqQOmk4Szhw=
+
+Name: be/ac/ulg/montefiore/run/distributions/package.html
+SHA1-Digest: 2gTk4nDPiKcTdbEEV4x7Xvnx6hE=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/OpdfGaussianReader.class
+SHA1-Digest: M90S3rto8ovREelaPP1vKyRnZpY=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/OpdfReader.class
+SHA1-Digest: gMgK7w8jR5ICymRukcPHjA4+hgw=
+
+Name: be/ac/ulg/montefiore/run/jahmm/CentroidFactory.class
+SHA1-Digest: cZCt41Fm3Apv9P2ACvaoSJ5BNTI=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/ObservationIntegerWriter.class
+SHA1-Digest: O6lPSGrdhEDsdb0o2x2G+u4XODo=
+
+Name: be/ac/ulg/montefiore/run/jahmm/apps/cli/ActionHandler$Actions.cl
+ ass
+SHA1-Digest: /3jjQS/p4pIjg9cVhoZUq8TUmfQ=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/ObservationSequencesWriter.cla
+ ss
+SHA1-Digest: UaXC6KbRjWPtPPkdPFUA9vBHyLw=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/FileFormatException.class
+SHA1-Digest: sW3103y1u9Oynt7TwrU889r4iio=
+
+Name: be/ac/ulg/montefiore/run/jahmm/apps/cli/Types.class
+SHA1-Digest: wGJiVyj4GyerIBa72sq+Eebwxpc=
+
+Name: be/ac/ulg/montefiore/run/jahmm/draw/HmmDrawerDot.class
+SHA1-Digest: 45OuxBztbBpJC10C2h69d5o+7dQ=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/ObservationRealWriter.class
+SHA1-Digest: yRY8yVhQbVyBfHQuglIaf7I7AVs=
+
+Name: be/ac/ulg/montefiore/run/jahmm/OpdfGaussianFactory.class
+SHA1-Digest: DzB7pHKl5O6CrXuUqCJIt6jv1EQ=
+
+Name: be/ac/ulg/montefiore/run/jahmm/draw/GenericHmmDrawerDot.class
+SHA1-Digest: hfgIb14ypHf1QyS6anO9L763Vqk=
+
+Name: be/ac/ulg/montefiore/run/distributions/ExponentialDistribution.c
+ lass
+SHA1-Digest: LjtffYtd4TPb5AHfXK18HoKOHJw=
+
+Name: be/ac/ulg/montefiore/run/jahmm/test/CliTest.class
+SHA1-Digest: 8LHRHeMsoAUrn38dalMRxXyZjb8=
+
+Name: be/ac/ulg/montefiore/run/jahmm/apps/cli/CommandLineArguments$Arg
+ uments.class
+SHA1-Digest: dWXSfam4tPjZPDy+Tu/YcpGMHQw=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/HmmWriter.class
+SHA1-Digest: d4r/N/b0BxqxDmgJPrFUUbm8Wag=
+
+Name: be/ac/ulg/montefiore/run/jahmm/ObservationVector.class
+SHA1-Digest: Anc3ptC6sJBDFwtQ9pjj98n540Q=
+
+Name: be/ac/ulg/montefiore/run/jahmm/ObservationReal.class
+SHA1-Digest: ixz5YLXLGL+21MdwBmfhDWiB/JE=
+
+Name: be/ac/ulg/montefiore/run/jahmm/test/GenerateTest.class
+SHA1-Digest: hOQ+zeatSRX4K7sx+ilAYKjfvOA=
+
+Name: be/ac/ulg/montefiore/run/jahmm/learn/BaumWelchScaledLearner.clas
+ s
+SHA1-Digest: BQ91q4kbtI/HLbo8Dnh4TGpg1gg=
+
+Name: be/ac/ulg/montefiore/run/distributions/SimpleMatrix.class
+SHA1-Digest: US7h8+EfXLek/SNtH6yhKAWLpdQ=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/OpdfMultiGaussianReader.class
+SHA1-Digest: Htej7N3EjbE1PGra8Keaw4CYfL0=
+
+Name: be/ac/ulg/montefiore/run/jahmm/io/ObservationVectorReader.class
+SHA1-Digest: /4nHl//IaXcdfYBX5CAD2jhWr64=
+
+Name: be/ac/ulg/montefiore/run/jahmm/test/GaussianTest.class
+SHA1-Digest: aSDsx2GRpylGALEWTUszqNBemAw=
+
