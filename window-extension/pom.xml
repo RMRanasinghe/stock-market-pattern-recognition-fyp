@@ -25,6 +25,8 @@
     </dependencies>
 
     <build>
+<!--        &lt;!&ndash;dash;&gt; Goal is set in order to run in idea<&ndash;&gt;
+        <defaultGoal>install</defaultGoal>-->
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>

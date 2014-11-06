@@ -120,8 +120,34 @@ public class Helper {
 		}
 		return null;
 	}
-	
-/**
+
+    /**
+     * Finds minimum Local value of a Queue uses rule based approach
+     * @param input
+     * @param bandwidth Considering neighborhood
+     * @return Integer; location of the minimum if exist or returns nulls
+     */
+    public Integer findMin(Queue<Double> input, int bandwidth){
+        int size = input.size();
+        Object[] inputArray = input.toArray();
+        for(int i = (size-bandwidth)-1;i>=bandwidth;--i){
+            Double min = Double.MAX_VALUE;
+            for(int j=i-bandwidth;j<=i+bandwidth;++j){
+                if((Double)inputArray[j]< min){
+                    min = (Double)inputArray[j];
+                }
+            }
+
+            if((Double)inputArray[i]==min){
+                return i;
+            }
+
+        }
+        return null;
+    }
+
+
+    /**
  *
  * @param s Queue
  * @return Index of the position of where the maximum value contains
