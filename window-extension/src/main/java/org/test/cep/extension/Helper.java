@@ -54,7 +54,7 @@ public class Helper {
 	private Double gaussianKernel(int x){
 		Double kernVal = 0.0;
 		
-		kernVal = (Math.pow(Math.E, (-x*x)/(2*bw*bw)))/(bw*Math.sqrt(2*Math.PI));
+		kernVal = (Math.pow(Math.E, (-x*x)/(2.0*bw*bw)))/(bw*Math.sqrt(2*Math.PI));
 		
 		return kernVal;
 	}
@@ -152,14 +152,14 @@ public class Helper {
  * @param s Queue
  * @return Index of the position of where the maximum value contains
  */
-	public int maxIndex(Queue<Double> s) {
+	public int maxIndex(Queue<Double> s,Integer pos, Integer window) {
 		Iterator<Double> itr = s.iterator();
 		Double m = Double.MIN_VALUE;
 		int index = 0;
 		int i = 0;
 		while (itr.hasNext()) {
 			Double nxt = itr.next();
-			if (m < nxt) {
+			if ((i<=pos+window)&&(i>=pos-window)&&(m < nxt)) {
 				m = nxt;
 				index = i;
 			}
@@ -173,14 +173,14 @@ public class Helper {
  * @param s Queue
  * @return minimum index
  */
-	public int minIndex(Queue<Double> s) {
+	public int minIndex(Queue<Double> s,Integer pos, Integer window) {
 		Iterator<Double> itr = s.iterator();
 		Double m = Double.MAX_VALUE;
 		int index = 0;
 		int i = 0;
 		while (itr.hasNext()) {
 			Double nxt = itr.next();
-			if (m > nxt) {
+			if ((i<=pos+window)&&(i>=pos-window)&&(m > nxt)) {
 				m = nxt;
 				index = i;
 			}
