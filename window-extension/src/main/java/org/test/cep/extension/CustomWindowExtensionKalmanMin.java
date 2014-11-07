@@ -1,21 +1,5 @@
 package org.test.cep.extension;
 
-/*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.event.in.InEvent;
@@ -32,8 +16,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
-@SiddhiExtension(namespace = "custom", function = "kalmanMax")
-public class CustomWindowExtensionKalmanMax extends WindowProcessor {
+/**
+ * @author woranga
+ * @date : Nov 06, 2014
+ */
+@SiddhiExtension(namespace = "custom", function = "kalmanMin")
+public class CustomWindowExtensionKalmanMin extends WindowProcessor {
 
     String variable = "";
     int variablePosition = 0;
@@ -111,7 +99,7 @@ public class CustomWindowExtensionKalmanMax extends WindowProcessor {
                         AbstractDefinition abstractDefinition, String s, boolean b,
                         SiddhiContext siddhiContext) {
 
-        if (expressions.length != 2) {//price variable name, bandwidth, window size
+        if (expressions.length != 3) {//price variable name, bandwidth, window size
             log.error("Parameters count is not matching, There should be two parameters ");
         }
         variable = ((Variable) expressions[0]).getAttributeName();
@@ -139,20 +127,22 @@ public class CustomWindowExtensionKalmanMax extends WindowProcessor {
 
             Queue<Double> output = helper.kalmanFilter(priceStack);
             //TODO:remove hard coded values
-            Integer maxPos = helper.findMax(output,2);
-            if(maxPos!=null){
+            Integer minPos = helper.findMin(output, 2);
+            if(minPos!=null){
                 //TODO:remove hard coded values
-                Integer maxPosEvnt = helper.findMax(priceStack,10);
-                if(maxPosEvnt!=null){
-                    InEvent maximumEvent = (InEvent)eventStack.toArray()[maxPosEvnt];
-                    if(!uniqueQueue.contains(maximumEvent)){
+                Integer minPosEvnt = helper.findMin(priceStack,10);
+                if(minPosEvnt!=null){
+                    InEvent minimumEvent = (InEvent)eventStack.toArray()[minPosEvnt];
+                    if(!uniqueQueue.contains(minimumEvent)){
                         //TODO:remove hard coded values
                         if(uniqueQueue.size()>5){
                             uniqueQueue.remove();
                         }
-                        uniqueQueue.add(maximumEvent);
-                        log.info(eventStack.toArray()[maxPos]);
-                        nextProcessor.process(maximumEvent);
+                        uniqueQueue.add(minimumEvent);
+                        log.info(eventStack.toArray()[minPos]);
+                        log.info(eventStack.toArray()[0]);
+                        log.info(eventStack.toArray()[eventStack.size()-1]);
+                        nextProcessor.process(minimumEvent);
 
                     }
                 }

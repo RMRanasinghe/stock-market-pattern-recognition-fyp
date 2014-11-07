@@ -207,12 +207,10 @@ public class Helper {
     public Queue<Double> kalmanFilter(Queue<Double> input){
         Queue<Double> dataInput = input;
         Queue<Double> dataOutput =new LinkedList<Double>();
-        //Kalman filter = new Kalman();
         int size =dataInput.size();
-        for(int i=0;i< size;i++){
-            dataOutput.add(Math.round(this.update(dataInput.remove())*100.0)/100.0);
+        for(double d:dataInput){
+            dataOutput.add(update(d));
         }
-
         return dataOutput;
     }
 
