@@ -131,7 +131,7 @@ public class CustomWindowExtensionKernelMin extends WindowProcessor {
             if(minPos!=null){
                 //TODO:remove hard coded values
                 Integer minPosEvnt = helper.findMin(priceStack,10);
-                if(minPosEvnt!=null){
+                if(minPosEvnt!=null && minPos>=minPosEvnt){
                     InEvent minimumEvent = (InEvent)eventStack.toArray()[minPosEvnt];
                     if(!uniqueQueue.contains(minimumEvent)){
                         //TODO:remove hard coded values
