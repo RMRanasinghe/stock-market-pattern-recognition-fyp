@@ -31,3 +31,13 @@ gaussianKernel <- function (x,bw){
 		kernalVal <- ((exp(1)^((-(x*x))/(2*bw*bw)))/(bw*sqrt(2*pi)))
 	return(kernalVal)
 }
+
+saveWindowPlot <- function (input,window,bw){
+	for(i in 1:(length(input)-window)){
+		saveName = paste0('plot',i,'.jpeg')
+		jpeg(file=saveName)
+		plot(input, type='l')
+		lines(c(i:(i+window)),smooth(input[i:(i+window)],bw))
+		dev.off()
+	}
+}
