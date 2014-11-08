@@ -127,7 +127,7 @@ public class CustomWindowExtensionKernelMin extends WindowProcessor {
 
             Queue<Double> output = helper.smooth(priceStack, bw);
             //TODO:remove hard coded values
-            Integer minPos = helper.findMin(output, 2);
+            Integer minPos = helper.findMin(output, 1);
             if(minPos!=null){
                 //TODO:remove hard coded values
                 Integer minPosEvnt = helper.findMin(priceStack,10);
