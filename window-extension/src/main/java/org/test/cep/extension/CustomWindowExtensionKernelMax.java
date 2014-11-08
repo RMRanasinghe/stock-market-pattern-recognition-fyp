@@ -43,6 +43,9 @@ public class CustomWindowExtensionKernelMax extends WindowProcessor {
 	Queue<Double> priceStack = null;
 	Queue<InEvent> uniqueQueue = null;
 
+	// TODO:uses for debugging. should remove
+	int dateVariablePosition = 0;
+
 	@Override
 	/**
 	 *This method called when processing an event
@@ -111,59 +114,70 @@ public class CustomWindowExtensionKernelMax extends WindowProcessor {
 			AbstractDefinition abstractDefinition, String s, boolean b,
 			SiddhiContext siddhiContext) {
 
-		if (expressions.length != 3) {//price variable name, bandwidth, window size
+		if (expressions.length != 3) {// price variable name, bandwidth, window
+										// size
 			log.error("Parameters count is not matching, There should be two parameters ");
 		}
 		variable = ((Variable) expressions[0]).getAttributeName();
 		bw = ((IntConstant) expressions[1]).getValue();
 		window = ((IntConstant) expressions[2]).getValue();
-		
+
 		eventStack = new LinkedList<InEvent>();
 		priceStack = new LinkedList<Double>();
 		uniqueQueue = new LinkedList<InEvent>();
 		variablePosition = abstractDefinition.getAttributePosition(variable);
 		
+		// TODO:for debugging. Should remove
+		dateVariablePosition = abstractDefinition.getAttributePosition("date");
+
 	}
 
 	private void doProcessing(InEvent event) {
-		Double eventKey = (Double)event.getData(variablePosition);
+		Double eventKey = (Double) event.getData(variablePosition);
 		Helper helper = new Helper();
-		
-		if(eventStack.size()< window){
+
+		if (eventStack.size() < window) {
 			eventStack.add(event);
 			priceStack.add(eventKey);
-		}
-		else{
+		} else {
 			eventStack.add(event);
 			priceStack.add(eventKey);
-			
+
 			Queue<Double> output = helper.smooth(priceStack, bw);
-			//TODO:remove hard coded values
-			Integer maxPos = helper.findMax(output,1);
-			if(maxPos!=null){
-				//TODO:remove hard coded values
-				Integer maxPosEvnt = helper.findMax(priceStack,10);
-				if(maxPosEvnt!=null && maxPos>=maxPosEvnt){
-					InEvent maximumEvent = (InEvent)eventStack.toArray()[maxPosEvnt];
-					if(!uniqueQueue.contains(maximumEvent)){
-						//TODO:remove hard coded values
-						if(uniqueQueue.size()>5){
+			// TODO:remove hard coded values
+			Integer maxPos = helper.findMax(output, 1);
+			if (maxPos != null) {
+				// TODO:remove hard coded values
+				Integer maxPosEvnt = helper.findMax(priceStack, 10);
+				if (maxPosEvnt != null && maxPos >= maxPosEvnt) {
+					InEvent maximumEvent = (InEvent) eventStack.toArray()[maxPosEvnt];
+					if (!uniqueQueue.contains(maximumEvent)) {
+						// TODO:remove hard coded values
+						if (uniqueQueue.size() > 5) {
 							uniqueQueue.remove();
 						}
 						uniqueQueue.add(maximumEvent);
-                        log.info(eventStack.toArray()[maxPos]);
-                        log.info(eventStack.toArray()[0]);
-                        log.info(eventStack.toArray()[eventStack.size()-1]);
+
+						// TODO:uses for debugging. Should remove
+						log.info("***max***  Window:"
+								+ ((InEvent) eventStack.toArray()[0])
+										.getData(dateVariablePosition)
+								+ "-"
+								+ ((InEvent) eventStack.toArray()[eventStack
+										.size() - 1])
+										.getData(dateVariablePosition)
+								+ "    max pos:"
+								+ maximumEvent.getData(dateVariablePosition));
+
 						nextProcessor.process(maximumEvent);
-						
+
 					}
 				}
 
-				
-			}			
+			}
 			eventStack.remove();
 			priceStack.remove();
-			
+
 		}
 
 	}
