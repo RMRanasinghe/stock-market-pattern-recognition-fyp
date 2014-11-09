@@ -1,7 +1,7 @@
-kalmanFilter <- function (input){
+kalmanFilter <- function (input,q,r){
 
-	Q <- 0.000001
-	R <- 0.0001
+	Q <- q
+	R <- r
 	P <- 1
 	X <- 0
 	size <- length(input)
@@ -24,7 +24,7 @@ saveWindowPlotKalman <- function (input,window){
 		saveName = paste0('plot',i,'.jpeg')
 		jpeg(file=saveName)
 		plot(input, type='l')
-		lines(c(i:(i+window-1)),kalmanFilter(input[i:(i+window)]))
+		lines(c(i:(i+window-1)),kalmanFilter(input[i:(i+window)]),0.000001,0.0001)
 		dev.off()
 	}
 }
