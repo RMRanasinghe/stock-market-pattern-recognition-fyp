@@ -23,140 +23,154 @@ import java.util.Queue;
 @SiddhiExtension(namespace = "custom", function = "kernelMin")
 public class CustomWindowExtensionKernelMin extends WindowProcessor {
 
-    String variable = "";
-    int variablePosition = 0;
-    int bw = 0;
-    int window = 0;
-    Queue<InEvent> eventStack = null;
-    Queue<Double> priceStack = null;
-    Queue<InEvent> uniqueQueue = null;
+	String variable = "";
+	int variablePosition = 0;
+	int bw = 0;
+	int window = 0;
+	Queue<InEvent> eventStack = null;
+	Queue<Double> priceStack = null;
+	Queue<InEvent> uniqueQueue = null;
 
-    @Override
-    /**
-     *This method called when processing an event
-     */
-    protected void processEvent(InEvent inEvent) {
-        acquireLock();
-        try {
-            doProcessing(inEvent);
-        } finally
+	// TODO:uses for debugging. should remove
+	int dateVariablePosition = 0;
 
-        {
-            releaseLock();
-        }
+	@Override
+	/**
+	 *This method called when processing an event
+	 */
+	protected void processEvent(InEvent inEvent) {
+		acquireLock();
+		try {
+			doProcessing(inEvent);
+		} finally
 
-    }
+		{
+			releaseLock();
+		}
 
-    @Override
-    /**
-     *This method called when processing an event list
-     */
-    protected void processEvent(InListEvent inListEvent) {
+	}
 
-        for (int i = 0; i < inListEvent.getActiveEvents(); i++) {
-            InEvent inEvent = (InEvent) inListEvent.getEvent(i);
-            processEvent(inEvent);
-        }
-    }
+	@Override
+	/**
+	 *This method called when processing an event list
+	 */
+	protected void processEvent(InListEvent inListEvent) {
 
-    @Override
-    /**
-     * This method iterate through the events which are in window
-     */
-    public Iterator<StreamEvent> iterator() {
-        return null;
-    }
+		for (int i = 0; i < inListEvent.getActiveEvents(); i++) {
+			InEvent inEvent = (InEvent) inListEvent.getEvent(i);
+			processEvent(inEvent);
+		}
+	}
 
-    @Override
-    /**
-     * This method iterate through the events which are in window but used in distributed processing
-     */
-    public Iterator<StreamEvent> iterator(String s) {
-        return null;
-    }
+	@Override
+	/**
+	 * This method iterate through the events which are in window
+	 */
+	public Iterator<StreamEvent> iterator() {
+		return null;
+	}
 
-    @Override
-    /**
-     * This method used to return the current state of the window, Used for persistence of data
-     */
-    protected Object[] currentState() {
-        return new Object[] { eventStack };
-    }
+	@Override
+	/**
+	 * This method iterate through the events which are in window but used in distributed processing
+	 */
+	public Iterator<StreamEvent> iterator(String s) {
+		return null;
+	}
 
-    @Override
-    /**
-     * This method is used to restore from the persisted state
-     */
-    protected void restoreState(Object[] objects) {
-    }
+	@Override
+	/**
+	 * This method used to return the current state of the window, Used for persistence of data
+	 */
+	protected Object[] currentState() {
+		return new Object[] { eventStack };
+	}
 
-    @Override
-    /**
-     * Method called when initialising the extension
-     */
-    protected void init(Expression[] expressions,
-                        QueryPostProcessingElement queryPostProcessingElement,
-                        AbstractDefinition abstractDefinition, String s, boolean b,
-                        SiddhiContext siddhiContext) {
+	@Override
+	/**
+	 * This method is used to restore from the persisted state
+	 */
+	protected void restoreState(Object[] objects) {
+	}
 
-        if (expressions.length != 3) {//price variable name, bandwidth, window size
-            log.error("Parameters count is not matching, There should be two parameters ");
-        }
-        variable = ((Variable) expressions[0]).getAttributeName();
-        bw = ((IntConstant) expressions[1]).getValue();
-        window = ((IntConstant) expressions[2]).getValue();
+	@Override
+	/**
+	 * Method called when initialising the extension
+	 */
+	protected void init(Expression[] expressions,
+			QueryPostProcessingElement queryPostProcessingElement,
+			AbstractDefinition abstractDefinition, String s, boolean b,
+			SiddhiContext siddhiContext) {
 
-        eventStack = new LinkedList<InEvent>();
-        priceStack = new LinkedList<Double>();
-        uniqueQueue = new LinkedList<InEvent>();
-        variablePosition = abstractDefinition.getAttributePosition(variable);
+		if (expressions.length != 3) {// price variable name, bandwidth, window
+										// size
+			log.error("Parameters count is not matching, There should be two parameters ");
+		}
+		variable = ((Variable) expressions[0]).getAttributeName();
+		bw = ((IntConstant) expressions[1]).getValue();
+		window = ((IntConstant) expressions[2]).getValue();
 
-    }
+		eventStack = new LinkedList<InEvent>();
+		priceStack = new LinkedList<Double>();
+		uniqueQueue = new LinkedList<InEvent>();
+		variablePosition = abstractDefinition.getAttributePosition(variable);
 
-    private void doProcessing(InEvent event) {
-        Double eventKey = (Double)event.getData(variablePosition);
-        Helper helper = new Helper();
+		// TODO:for debugging. Should remove
+		dateVariablePosition = abstractDefinition.getAttributePosition("date");
 
-        if(eventStack.size()< window){
-            eventStack.add(event);
-            priceStack.add(eventKey);
-        }
-        else{
-            eventStack.add(event);
-            priceStack.add(eventKey);
+	}
 
-            Queue<Double> output = helper.smooth(priceStack, bw);
-            //TODO:remove hard coded values
-            Integer minPos = helper.findMin(output, 2);
-            if(minPos!=null){
-                //TODO:remove hard coded values
-                Integer minPosEvnt = helper.findMin(priceStack,10);
-                if(minPosEvnt!=null && minPos>=minPosEvnt){
-                    InEvent minimumEvent = (InEvent)eventStack.toArray()[minPosEvnt];
-                    if(!uniqueQueue.contains(minimumEvent)){
-                        //TODO:remove hard coded values
-                        if(uniqueQueue.size()>5){
-                            uniqueQueue.remove();
-                        }
-                        uniqueQueue.add(minimumEvent);
-                        log.info(eventStack.toArray()[minPos]);
-                        log.info(eventStack.toArray()[0]);
-                        log.info(eventStack.toArray()[eventStack.size()-1]);
-                        nextProcessor.process(minimumEvent);
+	private void doProcessing(InEvent event) {
+		Double eventKey = (Double) event.getData(variablePosition);
+		Helper helper = new Helper();
 
-                    }
-                }
+		if (eventStack.size() < window) {
+			eventStack.add(event);
+			priceStack.add(eventKey);
+		} else {
+			eventStack.add(event);
+			priceStack.add(eventKey);
 
+			Queue<Double> output = helper.smooth(priceStack, bw);
+			// TODO:remove hard coded values
+			Integer minPos = helper.findMin(output, 1);
+			if (minPos != null) {
+				// TODO:remove hard coded values
+				Integer minPosEvnt = helper.findMin(priceStack, 10);
+				if (minPosEvnt != null && minPos >= minPosEvnt) {
+					InEvent minimumEvent = (InEvent) eventStack.toArray()[minPosEvnt];
+					if (!uniqueQueue.contains(minimumEvent)) {
+						// TODO:remove hard coded values
+						if (uniqueQueue.size() > 5) {
+							uniqueQueue.remove();
+						}
+						uniqueQueue.add(minimumEvent);
 
-            }
-            eventStack.remove();
-            priceStack.remove();
+						// TODO:uses for debugging. Should remove
+						log.info("***min***  Window:"
+								+ ((InEvent) eventStack.toArray()[0])
+										.getData(dateVariablePosition)
+								+ "-"
+								+ ((InEvent) eventStack.toArray()[eventStack
+										.size() - 1])
+										.getData(dateVariablePosition)
+								+ "    min pos:"
+								+ minimumEvent.getData(dateVariablePosition));
 
-        }
+						nextProcessor.process(minimumEvent);
 
-    }
+					}
+				}
 
-    @Override
-    public void destroy() {
-    }
+			}
+			eventStack.remove();
+			priceStack.remove();
+
+		}
+
+	}
+
+	@Override
+	public void destroy() {
+	}
 }
