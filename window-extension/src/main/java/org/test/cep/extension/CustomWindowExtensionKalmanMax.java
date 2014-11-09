@@ -25,6 +25,7 @@ import org.wso2.siddhi.core.query.processor.window.WindowProcessor;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.expression.Variable;
+import org.wso2.siddhi.query.api.expression.constant.DoubleConstant;
 import org.wso2.siddhi.query.api.expression.constant.IntConstant;
 import org.wso2.siddhi.query.api.extension.annotation.SiddhiExtension;
 
@@ -42,6 +43,8 @@ public class CustomWindowExtensionKalmanMax extends WindowProcessor {
     Queue<InEvent> eventStack = null;
     Queue<Double> priceStack = null;
     Queue<InEvent> uniqueQueue = null;
+    double Q = 0.000001;
+    double R= 0.0001;
 
     @Override
     /**
@@ -116,7 +119,9 @@ public class CustomWindowExtensionKalmanMax extends WindowProcessor {
         }
         variable = ((Variable) expressions[0]).getAttributeName();
         //bw = ((IntConstant) expressions[1]).getValue();
-        window = ((IntConstant) expressions[1]).getValue();
+        Q =   ((DoubleConstant) expressions[1]).getValue();
+        R =  ((DoubleConstant) expressions[2]).getValue();
+        window = ((IntConstant) expressions[3]).getValue();
 
         eventStack = new LinkedList<InEvent>();
         priceStack = new LinkedList<Double>();
@@ -137,7 +142,7 @@ public class CustomWindowExtensionKalmanMax extends WindowProcessor {
             eventStack.add(event);
             priceStack.add(eventKey);
 
-            Queue<Double> output = helper.kalmanFilter(priceStack);
+            Queue<Double> output = helper.kalmanFilter(priceStack, Q, R);
             //TODO:remove hard coded values
             Integer maxPos = helper.findMax(output,2);
             if(maxPos!=null){

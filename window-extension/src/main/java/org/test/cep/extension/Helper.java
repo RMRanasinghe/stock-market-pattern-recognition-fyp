@@ -204,7 +204,9 @@ public class Helper {
         return result;
     }
 
-    public Queue<Double> kalmanFilter(Queue<Double> input){
+    public Queue<Double> kalmanFilter(Queue<Double> input,double q,double r){
+        this.Q=q;
+        this.R=r;
         Queue<Double> dataInput = input;
         Queue<Double> dataOutput =new LinkedList<Double>();
         int size =dataInput.size();
