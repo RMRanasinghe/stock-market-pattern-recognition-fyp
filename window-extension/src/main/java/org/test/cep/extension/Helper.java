@@ -145,6 +145,58 @@ public class Helper {
         }
         return null;
     }
+    
+    /**
+     * This is used to have two different bandwidths when finding maximum.
+     * @param input
+     * @param leftBandwidth
+     * @param rightBandwidth
+     * @return
+     */
+    public Integer findMax(Queue<Double> input, int leftBandwidth,int rightBandwidth){
+		int size = input.size();
+		Object[] inputArray = input.toArray();
+		for(int i = (size-rightBandwidth)-1;i>=leftBandwidth;--i){
+			Double max = Double.MIN_VALUE;
+			for(int j=i-leftBandwidth;j<=i+rightBandwidth;++j){
+				if((Double)inputArray[j]>max){
+					max = (Double)inputArray[j];
+				}
+			}
+			
+			if((Double)inputArray[i]==max){
+				return i;
+			}
+			
+		}
+		return null;
+	}
+
+    /**
+     * This is used to have two different bandwidths when finding minimum.
+     * @param input
+     * @param leftBandwidth
+     * @param rightBandwidth
+     * @return
+     */
+    public Integer findMin(Queue<Double> input, int leftBandwidth,int rightBandwidth){
+        int size = input.size();
+        Object[] inputArray = input.toArray();
+        for(int i = (size-rightBandwidth)-1;i>=leftBandwidth;--i){
+            Double min = Double.MAX_VALUE;
+            for(int j=i-leftBandwidth;j<=i+rightBandwidth;++j){
+                if((Double)inputArray[j]< min){
+                    min = (Double)inputArray[j];
+                }
+            }
+
+            if((Double)inputArray[i]==min){
+                return i;
+            }
+
+        }
+        return null;
+    }
 
 
     /**

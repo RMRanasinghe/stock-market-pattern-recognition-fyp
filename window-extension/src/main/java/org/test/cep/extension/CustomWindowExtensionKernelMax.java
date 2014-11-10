@@ -126,7 +126,7 @@ public class CustomWindowExtensionKernelMax extends WindowProcessor {
 		priceStack = new LinkedList<Double>();
 		uniqueQueue = new LinkedList<InEvent>();
 		variablePosition = abstractDefinition.getAttributePosition(variable);
-		
+
 		// TODO:for debugging. Should remove
 		dateVariablePosition = abstractDefinition.getAttributePosition("date");
 
@@ -148,8 +148,8 @@ public class CustomWindowExtensionKernelMax extends WindowProcessor {
 			Integer maxPos = helper.findMax(output, 1);
 			if (maxPos != null) {
 				// TODO:remove hard coded values
-				Integer maxPosEvnt = helper.findMax(priceStack, 10);
-				if (maxPosEvnt != null && maxPos >= maxPosEvnt) {
+				Integer maxPosEvnt = helper.findMax(priceStack, 10,15);
+				if (maxPosEvnt != null && maxPos >= (maxPosEvnt-2) && (maxPos-maxPosEvnt) < (window/2)) {// maxPosEvent - 1 due to findmax find one point delay.
 					InEvent maximumEvent = (InEvent) eventStack.toArray()[maxPosEvnt];
 					if (!uniqueQueue.contains(maximumEvent)) {
 						// TODO:remove hard coded values
@@ -167,7 +167,9 @@ public class CustomWindowExtensionKernelMax extends WindowProcessor {
 										.size() - 1])
 										.getData(dateVariablePosition)
 								+ "    max pos:"
-								+ maximumEvent.getData(dateVariablePosition));
+								+ maximumEvent.getData(dateVariablePosition)
+								+ "    max val:"
+								+ maximumEvent.getData(variablePosition));
 
 						nextProcessor.process(maximumEvent);
 
