@@ -1,0 +1,39 @@
+
+******************Identify tripple top, does not consider hights************
+
+from inputStream#window.custom:kernelMin(price,13,50)
+select *
+insert into minStream;
+
+from inputStream#window.custom:kernelMax(price,13,50)
+select *
+insert into maxStream;
+
+from min1=minStream,max1=maxStream,min2=minStream[((min1.price-price) < 2) and ((min1.price-price) > -2)], max2=maxStream, min3=minStream[((min2.price-price) < 2) and ((min2.price-price) > -2)]
+select min1.date as firstMin, min2.date as secondMin, min3.date as thirdMin
+insert into pattern
+                    
+
+**********************Using 1.5 difference from avg values*******************
+
+from inputStream#window.custom:kernelMin(price,13,50)
+select *
+insert into minStream;
+
+from inputStream#window.custom:kernelMax(price,13,50)
+select *
+insert into maxStream;
+
+from min1=minStream,
+	max1=maxStream,
+	min2=minStream, 
+	max2=maxStream, 
+	min3=minStream[min1.price > ((1-0.015)*(min1.price+min2.price+price)/3) 
+				   and min2.price > ((1-0.015)*(min1.price+min2.price+price)/3) 
+				   and price > ((1-0.015)*(min1.price+min2.price+price)/3)
+				   and min1.price < ((1+0.015)*(min1.price+min2.price+price)/3) 
+				   and min2.price < ((1+0.015)*(min1.price+min2.price+price)/3) 
+				   and price < ((1+0.015)*(min1.price+min2.price+price)/3)]
+select min1.date as firstMin, min2.date as secondMin, min3.date as thirdMin
+insert into pattern
+                    
