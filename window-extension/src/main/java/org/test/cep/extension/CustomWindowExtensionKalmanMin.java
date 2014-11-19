@@ -24,144 +24,156 @@ import java.util.Queue;
 @SiddhiExtension(namespace = "custom", function = "kalmanMin")
 public class CustomWindowExtensionKalmanMin extends WindowProcessor {
 
-    String variable = "";
-    int variablePosition = 0;
-    int bw = 0;
-    int window = 0;
-    Queue<InEvent> eventStack = null;
-    Queue<Double> priceStack = null;
-    Queue<InEvent> uniqueQueue = null;
-    double Q = 0.000001;
-    double R= 0.0001;
+	String variable = "";
+	int variablePosition = 0;
+	int bw = 0;
+	int window = 0;
+	Queue<InEvent> eventStack = null;
+	Queue<Double> priceStack = null;
+	Queue<InEvent> uniqueQueue = null;
+	double Q = 0.000001;
+	double R = 0.0001;
+	// TODO:uses for debugging. should remove
+		int dateVariablePosition = 0;
 
-    @Override
-    /**
-     *This method called when processing an event
-     */
-    protected void processEvent(InEvent inEvent) {
-        acquireLock();
-        try {
-            doProcessing(inEvent);
-        } finally
+	@Override
+	/**
+	 *This method called when processing an event
+	 */
+	protected void processEvent(InEvent inEvent) {
+		acquireLock();
+		try {
+			doProcessing(inEvent);
+		} finally
 
-        {
-            releaseLock();
-        }
+		{
+			releaseLock();
+		}
 
-    }
+	}
 
-    @Override
-    /**
-     *This method called when processing an event list
-     */
-    protected void processEvent(InListEvent inListEvent) {
+	@Override
+	/**
+	 *This method called when processing an event list
+	 */
+	protected void processEvent(InListEvent inListEvent) {
 
-        for (int i = 0; i < inListEvent.getActiveEvents(); i++) {
-            InEvent inEvent = (InEvent) inListEvent.getEvent(i);
-            processEvent(inEvent);
-        }
-    }
+		for (int i = 0; i < inListEvent.getActiveEvents(); i++) {
+			InEvent inEvent = (InEvent) inListEvent.getEvent(i);
+			processEvent(inEvent);
+		}
+	}
 
-    @Override
-    /**
-     * This method iterate through the events which are in window
-     */
-    public Iterator<StreamEvent> iterator() {
-        return null;
-    }
+	@Override
+	/**
+	 * This method iterate through the events which are in window
+	 */
+	public Iterator<StreamEvent> iterator() {
+		return null;
+	}
 
-    @Override
-    /**
-     * This method iterate through the events which are in window but used in distributed processing
-     */
-    public Iterator<StreamEvent> iterator(String s) {
-        return null;
-    }
+	@Override
+	/**
+	 * This method iterate through the events which are in window but used in distributed processing
+	 */
+	public Iterator<StreamEvent> iterator(String s) {
+		return null;
+	}
 
-    @Override
-    /**
-     * This method used to return the current state of the window, Used for persistence of data
-     */
-    protected Object[] currentState() {
-        return new Object[] { eventStack };
-    }
+	@Override
+	/**
+	 * This method used to return the current state of the window, Used for persistence of data
+	 */
+	protected Object[] currentState() {
+		return new Object[] { eventStack };
+	}
 
-    @Override
-    /**
-     * This method is used to restore from the persisted state
-     */
-    protected void restoreState(Object[] objects) {
-    }
+	@Override
+	/**
+	 * This method is used to restore from the persisted state
+	 */
+	protected void restoreState(Object[] objects) {
+	}
 
-    @Override
-    /**
-     * Method called when initialising the extension
-     */
-    protected void init(Expression[] expressions,
-                        QueryPostProcessingElement queryPostProcessingElement,
-                        AbstractDefinition abstractDefinition, String s, boolean b,
-                        SiddhiContext siddhiContext) {
+	@Override
+	/**
+	 * Method called when initialising the extension
+	 */
+	protected void init(Expression[] expressions,
+			QueryPostProcessingElement queryPostProcessingElement,
+			AbstractDefinition abstractDefinition, String s, boolean b,
+			SiddhiContext siddhiContext) {
 
-        if (expressions.length != 3) {//price variable name, bandwidth, window size
-            log.error("Parameters count is not matching, There should be two parameters ");
-        }
-        variable = ((Variable) expressions[0]).getAttributeName();
-        //bw = ((IntConstant) expressions[1]).getValue();
-        Q =   ((DoubleConstant) expressions[1]).getValue();
-        R =  ((DoubleConstant) expressions[2]).getValue();
-        window = ((IntConstant) expressions[3]).getValue();
+		if (expressions.length != 3) {// price variable name, bandwidth, window
+										// size
+			log.error("Parameters count is not matching, There should be two parameters ");
+		}
+		variable = ((Variable) expressions[0]).getAttributeName();
+		// bw = ((IntConstant) expressions[1]).getValue();
+		Q = ((DoubleConstant) expressions[1]).getValue();
+		R = ((DoubleConstant) expressions[2]).getValue();
+		window = ((IntConstant) expressions[3]).getValue();
 
-        eventStack = new LinkedList<InEvent>();
-        priceStack = new LinkedList<Double>();
-        uniqueQueue = new LinkedList<InEvent>();
-        variablePosition = abstractDefinition.getAttributePosition(variable);
+		eventStack = new LinkedList<InEvent>();
+		priceStack = new LinkedList<Double>();
+		uniqueQueue = new LinkedList<InEvent>();
+		variablePosition = abstractDefinition.getAttributePosition(variable);
+		// TODO:for debugging. Should remove
+		dateVariablePosition = abstractDefinition.getAttributePosition("date");
 
-    }
+	}
 
-    private void doProcessing(InEvent event) {
-        Double eventKey = (Double)event.getData(variablePosition);
-        Helper helper = new Helper();
+	private void doProcessing(InEvent event) {
+		Double eventKey = (Double) event.getData(variablePosition);
+		Helper helper = new Helper();
 
-        if(eventStack.size()< window){
-            eventStack.add(event);
-            priceStack.add(eventKey);
-        }
-        else{
-            eventStack.add(event);
-            priceStack.add(eventKey);
+		if (eventStack.size() < window) {
+			eventStack.add(event);
+			priceStack.add(eventKey);
+		} else {
+			eventStack.add(event);
+			priceStack.add(eventKey);
 
-            Queue<Double> output = helper.kalmanFilter(priceStack,Q,R);
-            //TODO:remove hard coded values
-            Integer minPos = helper.findMin(output, 2);
-            if(minPos!=null){
-                //TODO:remove hard coded values
-                Integer minPosEvnt = helper.findMin(priceStack,10);
-                if(minPosEvnt!=null){
-                    InEvent minimumEvent = (InEvent)eventStack.toArray()[minPosEvnt];
-                    if(!uniqueQueue.contains(minimumEvent)){
-                        //TODO:remove hard coded values
-                        if(uniqueQueue.size()>5){
-                            uniqueQueue.remove();
-                        }
-                        uniqueQueue.add(minimumEvent);
-                        log.info(eventStack.toArray()[minPos]);
-                        log.info(eventStack.toArray()[0]);
-                        log.info(eventStack.toArray()[eventStack.size()-1]);
-                        nextProcessor.process(minimumEvent);
+			Queue<Double> output = helper.kalmanFilter(priceStack, Q, R);
+			// TODO:remove hard coded values
+			Integer minPos = helper.findMin(output, 2);
+			if (minPos != null) {
+				// TODO:remove hard coded values
+				Integer minPosEvnt = helper.findMin(priceStack, 10);
+				if (minPosEvnt != null) {
+					InEvent minimumEvent = (InEvent) eventStack.toArray()[minPosEvnt];
+					if (!uniqueQueue.contains(minimumEvent)) {
+						// TODO:remove hard coded values
+						if (uniqueQueue.size() > 5) {
+							uniqueQueue.remove();
+						}
+						uniqueQueue.add(minimumEvent);
+						// TODO:uses for debugging. Should remove
+						log.info("***min***  Window:"
+								+ ((InEvent) eventStack.toArray()[0])
+										.getData(dateVariablePosition)
+								+ "-"
+								+ ((InEvent) eventStack.toArray()[eventStack
+										.size() - 1])
+										.getData(dateVariablePosition)
+								+ "    min pos:"
+								+ minimumEvent.getData(dateVariablePosition)
+								+ "    min val:"
+								+ minimumEvent.getData(variablePosition));
+						nextProcessor.process(minimumEvent);
 
-                    }
-                }
+					}
+				}
 
+			}
+			eventStack.remove();
+			priceStack.remove();
 
-            }
-            eventStack.remove();
-            priceStack.remove();
+		}
 
-        }
+	}
 
-    }
-
-    @Override
-    public void destroy() {
-    }
+	@Override
+	public void destroy() {
+	}
 }

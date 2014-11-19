@@ -36,142 +36,158 @@ import java.util.Queue;
 @SiddhiExtension(namespace = "custom", function = "kalmanMax")
 public class CustomWindowExtensionKalmanMax extends WindowProcessor {
 
-    String variable = "";
-    int variablePosition = 0;
-    int bw = 0;
-    int window = 0;
-    Queue<InEvent> eventStack = null;
-    Queue<Double> priceStack = null;
-    Queue<InEvent> uniqueQueue = null;
-    double Q = 0.000001;
-    double R= 0.0001;
+	String variable = "";
+	int variablePosition = 0;
+	int bw = 0;
+	int window = 0;
+	Queue<InEvent> eventStack = null;
+	Queue<Double> priceStack = null;
+	Queue<InEvent> uniqueQueue = null;
+	double Q = 0.000001;
+	double R = 0.0001;
 
-    @Override
-    /**
-     *This method called when processing an event
-     */
-    protected void processEvent(InEvent inEvent) {
-        acquireLock();
-        try {
-            doProcessing(inEvent);
-        } finally
+	// TODO:uses for debugging. should remove
+	int dateVariablePosition = 0;
 
-        {
-            releaseLock();
-        }
+	@Override
+	/**
+	 *This method called when processing an event
+	 */
+	protected void processEvent(InEvent inEvent) {
+		acquireLock();
+		try {
+			doProcessing(inEvent);
+		} finally
 
-    }
+		{
+			releaseLock();
+		}
 
-    @Override
-    /**
-     *This method called when processing an event list
-     */
-    protected void processEvent(InListEvent inListEvent) {
+	}
 
-        for (int i = 0; i < inListEvent.getActiveEvents(); i++) {
-            InEvent inEvent = (InEvent) inListEvent.getEvent(i);
-            processEvent(inEvent);
-        }
-    }
+	@Override
+	/**
+	 *This method called when processing an event list
+	 */
+	protected void processEvent(InListEvent inListEvent) {
 
-    @Override
-    /**
-     * This method iterate through the events which are in window
-     */
-    public Iterator<StreamEvent> iterator() {
-        return null;
-    }
+		for (int i = 0; i < inListEvent.getActiveEvents(); i++) {
+			InEvent inEvent = (InEvent) inListEvent.getEvent(i);
+			processEvent(inEvent);
+		}
+	}
 
-    @Override
-    /**
-     * This method iterate through the events which are in window but used in distributed processing
-     */
-    public Iterator<StreamEvent> iterator(String s) {
-        return null;
-    }
+	@Override
+	/**
+	 * This method iterate through the events which are in window
+	 */
+	public Iterator<StreamEvent> iterator() {
+		return null;
+	}
 
-    @Override
-    /**
-     * This method used to return the current state of the window, Used for persistence of data
-     */
-    protected Object[] currentState() {
-        return new Object[] { eventStack };
-    }
+	@Override
+	/**
+	 * This method iterate through the events which are in window but used in distributed processing
+	 */
+	public Iterator<StreamEvent> iterator(String s) {
+		return null;
+	}
 
-    @Override
-    /**
-     * This method is used to restore from the persisted state
-     */
-    protected void restoreState(Object[] objects) {
-    }
+	@Override
+	/**
+	 * This method used to return the current state of the window, Used for persistence of data
+	 */
+	protected Object[] currentState() {
+		return new Object[] { eventStack };
+	}
 
-    @Override
-    /**
-     * Method called when initialising the extension
-     */
-    protected void init(Expression[] expressions,
-                        QueryPostProcessingElement queryPostProcessingElement,
-                        AbstractDefinition abstractDefinition, String s, boolean b,
-                        SiddhiContext siddhiContext) {
+	@Override
+	/**
+	 * This method is used to restore from the persisted state
+	 */
+	protected void restoreState(Object[] objects) {
+	}
 
-        if (expressions.length != 2) {//price variable name, bandwidth, window size
-            log.error("Parameters count is not matching, There should be two parameters ");
-        }
-        variable = ((Variable) expressions[0]).getAttributeName();
-        //bw = ((IntConstant) expressions[1]).getValue();
-        Q =   ((DoubleConstant) expressions[1]).getValue();
-        R =  ((DoubleConstant) expressions[2]).getValue();
-        window = ((IntConstant) expressions[3]).getValue();
+	@Override
+	/**
+	 * Method called when initialising the extension
+	 */
+	protected void init(Expression[] expressions,
+			QueryPostProcessingElement queryPostProcessingElement,
+			AbstractDefinition abstractDefinition, String s, boolean b,
+			SiddhiContext siddhiContext) {
 
-        eventStack = new LinkedList<InEvent>();
-        priceStack = new LinkedList<Double>();
-        uniqueQueue = new LinkedList<InEvent>();
-        variablePosition = abstractDefinition.getAttributePosition(variable);
+		if (expressions.length != 2) {// price variable name, bandwidth, window
+										// size
+			log.error("Parameters count is not matching, There should be two parameters ");
+		}
+		variable = ((Variable) expressions[0]).getAttributeName();
+		// bw = ((IntConstant) expressions[1]).getValue();
+		Q = ((DoubleConstant) expressions[1]).getValue();
+		R = ((DoubleConstant) expressions[2]).getValue();
+		window = ((IntConstant) expressions[3]).getValue();
 
-    }
+		eventStack = new LinkedList<InEvent>();
+		priceStack = new LinkedList<Double>();
+		uniqueQueue = new LinkedList<InEvent>();
+		variablePosition = abstractDefinition.getAttributePosition(variable);
 
-    private void doProcessing(InEvent event) {
-        Double eventKey = (Double)event.getData(variablePosition);
-        Helper helper = new Helper();
+		// TODO:for debugging. Should remove
+		dateVariablePosition = abstractDefinition.getAttributePosition("date");
 
-        if(eventStack.size()< window){
-            eventStack.add(event);
-            priceStack.add(eventKey);
-        }
-        else{
-            eventStack.add(event);
-            priceStack.add(eventKey);
+	}
 
-            Queue<Double> output = helper.kalmanFilter(priceStack, Q, R);
-            //TODO:remove hard coded values
-            Integer maxPos = helper.findMax(output,2);
-            if(maxPos!=null){
-                //TODO:remove hard coded values
-                Integer maxPosEvnt = helper.findMax(priceStack,10);
-                if(maxPosEvnt!=null){
-                    InEvent maximumEvent = (InEvent)eventStack.toArray()[maxPosEvnt];
-                    if(!uniqueQueue.contains(maximumEvent)){
-                        //TODO:remove hard coded values
-                        if(uniqueQueue.size()>5){
-                            uniqueQueue.remove();
-                        }
-                        uniqueQueue.add(maximumEvent);
-                        log.info(eventStack.toArray()[maxPos]);
-                        nextProcessor.process(maximumEvent);
+	private void doProcessing(InEvent event) {
+		Double eventKey = (Double) event.getData(variablePosition);
+		Helper helper = new Helper();
 
-                    }
-                }
+		if (eventStack.size() < window) {
+			eventStack.add(event);
+			priceStack.add(eventKey);
+		} else {
+			eventStack.add(event);
+			priceStack.add(eventKey);
 
+			Queue<Double> output = helper.kalmanFilter(priceStack, Q, R);
+			// TODO:remove hard coded values
+			Integer maxPos = helper.findMax(output, 2);
+			if (maxPos != null) {
+				// TODO:remove hard coded values
+				Integer maxPosEvnt = helper.findMax(priceStack, 10);
+				if (maxPosEvnt != null) {
+					InEvent maximumEvent = (InEvent) eventStack.toArray()[maxPosEvnt];
+					if (!uniqueQueue.contains(maximumEvent)) {
+						// TODO:remove hard coded values
+						if (uniqueQueue.size() > 5) {
+							uniqueQueue.remove();
+						}
+						uniqueQueue.add(maximumEvent);
+						// TODO:uses for debugging. Should remove
+						log.info("***max***  Window:"
+								+ ((InEvent) eventStack.toArray()[0])
+										.getData(dateVariablePosition)
+								+ "-"
+								+ ((InEvent) eventStack.toArray()[eventStack
+										.size() - 1])
+										.getData(dateVariablePosition)
+								+ "    max pos:"
+								+ maximumEvent.getData(dateVariablePosition)
+								+ "    max val:"
+								+ maximumEvent.getData(variablePosition));
+						nextProcessor.process(maximumEvent);
 
-            }
-            eventStack.remove();
-            priceStack.remove();
+					}
+				}
 
-        }
+			}
+			eventStack.remove();
+			priceStack.remove();
 
-    }
+		}
 
-    @Override
-    public void destroy() {
-    }
+	}
+
+	@Override
+	public void destroy() {
+	}
 }
