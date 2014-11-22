@@ -9,6 +9,7 @@ import org.wso2.siddhi.core.query.processor.window.WindowProcessor;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.expression.Variable;
+import org.wso2.siddhi.query.api.expression.constant.DoubleConstant;
 import org.wso2.siddhi.query.api.expression.constant.IntConstant;
 import org.wso2.siddhi.query.api.extension.annotation.SiddhiExtension;
 
@@ -25,11 +26,12 @@ public class CustomWindowExtensionKernelMin extends WindowProcessor {
 
 	String variable = "";
 	int variablePosition = 0;
-	int bw = 0;
+	double bw = 0;
 	int window = 0;
 	Queue<InEvent> eventStack = null;
 	Queue<Double> priceStack = null;
 	Queue<InEvent> uniqueQueue = null;
+	Helper helper = null;
 
 	// TODO:uses for debugging. should remove
 	int dateVariablePosition = 0;
@@ -107,13 +109,19 @@ public class CustomWindowExtensionKernelMin extends WindowProcessor {
 			log.error("Parameters count is not matching, There should be two parameters ");
 		}
 		variable = ((Variable) expressions[0]).getAttributeName();
-		bw = ((IntConstant) expressions[1]).getValue();
 		window = ((IntConstant) expressions[2]).getValue();
+
+		try {
+			bw = ((DoubleConstant) expressions[1]).getValue();
+		} catch (Exception e) {
+			bw = ((IntConstant) expressions[1]).getValue();
+		}
 
 		eventStack = new LinkedList<InEvent>();
 		priceStack = new LinkedList<Double>();
 		uniqueQueue = new LinkedList<InEvent>();
 		variablePosition = abstractDefinition.getAttributePosition(variable);
+		helper = new Helper();
 
 		// TODO:for debugging. Should remove
 		dateVariablePosition = abstractDefinition.getAttributePosition("date");
@@ -122,7 +130,6 @@ public class CustomWindowExtensionKernelMin extends WindowProcessor {
 
 	private void doProcessing(InEvent event) {
 		Double eventKey = (Double) event.getData(variablePosition);
-		Helper helper = new Helper();
 
 		if (eventStack.size() < window) {
 			eventStack.add(event);
@@ -136,15 +143,17 @@ public class CustomWindowExtensionKernelMin extends WindowProcessor {
 			Integer minPos = helper.findMin(output, 1);
 			if (minPos != null) {
 				// TODO:remove hard coded values
-				Integer minPosEvnt = helper.findMin(priceStack, window/5,window/3);
-				
-				//TODO:remove following comment - debug purpose.
-//				if(minPosEvnt!=null){
-//				log.info(minPos+"-----------min---------"+minPosEvnt);
-//				log.info(eventStack.toArray()[minPosEvnt]);
-//				}
-				
-				if (minPosEvnt != null && minPosEvnt - minPos <= window/5 && minPos-minPosEvnt <= window/2) {
+				Integer minPosEvnt = helper.findMin(priceStack, window / 5,
+						window / 3);
+
+				// TODO:remove following comment - debug purpose.
+				// if(minPosEvnt!=null){
+				// log.info(minPos+"-----------min---------"+minPosEvnt);
+				// log.info(eventStack.toArray()[minPosEvnt]);
+				// }
+
+				if (minPosEvnt != null && minPosEvnt - minPos <= window / 5
+						&& minPos - minPosEvnt <= window / 2) {
 					InEvent minimumEvent = (InEvent) eventStack.toArray()[minPosEvnt];
 					if (!uniqueQueue.contains(minimumEvent)) {
 						// TODO:remove hard coded values
@@ -154,16 +163,17 @@ public class CustomWindowExtensionKernelMin extends WindowProcessor {
 						uniqueQueue.add(minimumEvent);
 
 						// TODO:uses for debugging. Should remove
-						log.info("***min***  Window:"
-								+ ((InEvent) eventStack.toArray()[0])
-										.getData(dateVariablePosition)
-								+ "-"
-								+ ((InEvent) eventStack.toArray()[eventStack
-										.size() - 1])
-										.getData(dateVariablePosition)
-								+ "    min pos:"
-								+ minimumEvent.getData(dateVariablePosition)+"    min val:"+minimumEvent.getData(variablePosition));
-						log.info(eventStack.toArray()[minPosEvnt]);
+						// log.info("***min***  Window:"
+						// + ((InEvent) eventStack.toArray()[0])
+						// .getData(dateVariablePosition)
+						// + "-"
+						// + ((InEvent) eventStack.toArray()[eventStack
+						// .size() - 1])
+						// .getData(dateVariablePosition)
+						// + "    min pos:"
+						// +
+						// minimumEvent.getData(dateVariablePosition)+"    min val:"+minimumEvent.getData(variablePosition));
+						// log.info(eventStack.toArray()[minPosEvnt]);
 
 						nextProcessor.process(minimumEvent);
 

@@ -5,70 +5,85 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class Helper {
-	
-	private int bw = 0;    //bandwith
+
+	private double bw = 0; // bandwith
 	private double Q = 0.000001;
-    private double R = 0.0001;
-    private double P = 1, X = 0, K;
+	private double R = 0.0001;
+	private double P = 1, X = 0, K;
+	private double[] kernelValues = null;
+
 	/**
 	 * 
-	 * @param s Queue
+	 * @param s
+	 *            Queue
 	 * @return the max value of the queue
 	 */
-	public Double max(Queue<Double> s){
+	public Double max(Queue<Double> s) {
 		Iterator<Double> itr = s.iterator();
-		Double m= Double.MIN_VALUE;
-		while(itr.hasNext()){
+		Double m = Double.MIN_VALUE;
+		while (itr.hasNext()) {
 			Double nxt = itr.next();
-			if(m<nxt){
-				m=nxt;
+			if (m < nxt) {
+				m = nxt;
 			}
 		}
-		//log.info(m);
+		// log.info(m);
 		return m;
 	}
-	
+
 	/**
 	 * 
-	 * @param s queue
+	 * @param s
+	 *            queue
 	 * @return the min of the queue
 	 */
-	public Double min(Queue<Double> s){
+	public Double min(Queue<Double> s) {
 		Iterator<Double> itr = s.iterator();
-		Double m= Double.MAX_VALUE;
-		while(itr.hasNext()){
+		Double m = Double.MAX_VALUE;
+		while (itr.hasNext()) {
 			Double nxt = itr.next();
-			if(m>nxt){
-				m=nxt;
+			if (m > nxt) {
+				m = nxt;
 			}
 		}
-		//log.info(m);
+		// log.info(m);
 		return m;
 	}
-	
+
 	/**
 	 * 
-	 * @param x X value for calculate Gaussian Kernel
+	 * @param x
+	 *            X value for calculate Gaussian Kernel
 	 * @return Double value of calculated Gaussian kernel
 	 */
-	private Double gaussianKernel(int x){
+	private Double gaussianKernel(int x) {
 		Double kernVal = 0.0;
-		
-		kernVal = (Math.pow(Math.E, (-x*x)/(2.0*bw*bw)))/(bw*Math.sqrt(2*Math.PI));
-		
+
+		kernVal = (Math.pow(Math.E, (-x * x) / (2.0 * bw * bw)))
+				/ (bw * Math.sqrt(2 * Math.PI));
+
 		return kernVal;
 	}
-	
+
 	/**
 	 * 
-	 * @param input input Queue
-	 * @param bw bandwidth
+	 * @param input
+	 *            input Queue
+	 * @param bw
+	 *            bandwidth
 	 * @return Gaussian kernel regression smoothed Queue
 	 */
-	public Queue<Double> smooth(Queue<Double> input, int bw){
+	public Queue<Double> smooth(Queue<Double> input, double bw) {
 		this.bw = bw;
 		Queue<Double> output = null;
-		
+
+		if (kernelValues == null) {
+			kernelValues = new double[input.size()+1];
+			for (int i = 0; i <= input.size(); ++i) {
+				kernelValues[i] = gaussianKernel(i);
+			}
+		}
+
 		int size = input.size();
 		Double kernUp = 0.0;
 		Double kernDown = 0.0;
@@ -76,142 +91,154 @@ public class Helper {
 		Double price = 0.0;
 		Double kern = 0.0;
 		output = new LinkedList<Double>();
-		
-		for(int i = 0 ; i < size ; ++i){
+
+		for (int i = 0; i < size; ++i) {
 			kernUp = 0.0;
 			kernDown = 0.0;
 			itr = input.iterator();
 			int j = 0;
-			
-			while(itr.hasNext()){
+
+			while (itr.hasNext()) {
 				price = itr.next();
-				kern = gaussianKernel(i-j);
-				kernUp += kern*price;
+				if (i - j >= 0) {
+					kern = kernelValues[i - j];
+				} else {
+					kern = kernelValues[j - i];
+				}
+				kernUp += kern * price;
 				kernDown += kern;
 				++j;
 			}
-			output.add(kernUp/kernDown);
+			output.add(kernUp / kernDown);
 		}
-		
+
 		return output;
 	}
-	
+
 	/**
 	 * Finds maximum Local value of a Queue uses rule based approach
+	 * 
 	 * @param input
-	 * @param bandwidth Considering neighborhood
+	 * @param bandwidth
+	 *            Considering neighborhood
 	 * @return Integer; location of the maximum if exist or returns nulls
 	 */
-	public Integer findMax(Queue<Double> input, int bandwidth){
+	public Integer findMax(Queue<Double> input, int bandwidth) {
 		int size = input.size();
 		Object[] inputArray = input.toArray();
-		for(int i = (size-bandwidth)-1;i>=bandwidth;--i){
+		for (int i = (size - bandwidth) - 1; i >= bandwidth; --i) {
 			Double max = Double.MIN_VALUE;
-			for(int j=i-bandwidth;j<=i+bandwidth;++j){
-				if((Double)inputArray[j]>max){
-					max = (Double)inputArray[j];
+			for (int j = i - bandwidth; j <= i + bandwidth; ++j) {
+				if ((Double) inputArray[j] > max) {
+					max = (Double) inputArray[j];
 				}
 			}
-			
-			if((Double)inputArray[i]==max){
+
+			if ((Double) inputArray[i] == max) {
 				return i;
 			}
-			
+
 		}
 		return null;
 	}
 
-    /**
-     * Finds minimum Local value of a Queue uses rule based approach
-     * @param input
-     * @param bandwidth Considering neighborhood
-     * @return Integer; location of the minimum if exist or returns nulls
-     */
-    public Integer findMin(Queue<Double> input, int bandwidth){
-        int size = input.size();
-        Object[] inputArray = input.toArray();
-        for(int i = (size-bandwidth)-1;i>=bandwidth;--i){
-            Double min = Double.MAX_VALUE;
-            for(int j=i-bandwidth;j<=i+bandwidth;++j){
-                if((Double)inputArray[j]< min){
-                    min = (Double)inputArray[j];
-                }
-            }
-
-            if((Double)inputArray[i]==min){
-                return i;
-            }
-
-        }
-        return null;
-    }
-    
-    /**
-     * This is used to have two different bandwidths when finding maximum.
-     * @param input
-     * @param leftBandwidth
-     * @param rightBandwidth
-     * @return
-     */
-    public Integer findMax(Queue<Double> input, int leftBandwidth,int rightBandwidth){
+	/**
+	 * Finds minimum Local value of a Queue uses rule based approach
+	 * 
+	 * @param input
+	 * @param bandwidth
+	 *            Considering neighborhood
+	 * @return Integer; location of the minimum if exist or returns nulls
+	 */
+	public Integer findMin(Queue<Double> input, int bandwidth) {
 		int size = input.size();
 		Object[] inputArray = input.toArray();
-		for(int i = (size-rightBandwidth)-1;i>=leftBandwidth;--i){
-			Double max = Double.MIN_VALUE;
-			for(int j=i-leftBandwidth;j<=i+rightBandwidth;++j){
-				if((Double)inputArray[j]>max){
-					max = (Double)inputArray[j];
+		for (int i = (size - bandwidth) - 1; i >= bandwidth; --i) {
+			Double min = Double.MAX_VALUE;
+			for (int j = i - bandwidth; j <= i + bandwidth; ++j) {
+				if ((Double) inputArray[j] < min) {
+					min = (Double) inputArray[j];
 				}
 			}
-			
-			if((Double)inputArray[i]==max){
+
+			if ((Double) inputArray[i] == min) {
 				return i;
 			}
-			
+
 		}
 		return null;
 	}
 
-    /**
-     * This is used to have two different bandwidths when finding minimum.
-     * @param input
-     * @param leftBandwidth
-     * @param rightBandwidth
-     * @return
-     */
-    public Integer findMin(Queue<Double> input, int leftBandwidth,int rightBandwidth){
-        int size = input.size();
-        Object[] inputArray = input.toArray();
-        for(int i = (size-rightBandwidth)-1;i>=leftBandwidth;--i){
-            Double min = Double.MAX_VALUE;
-            for(int j=i-leftBandwidth;j<=i+rightBandwidth;++j){
-                if((Double)inputArray[j]< min){
-                    min = (Double)inputArray[j];
-                }
-            }
+	/**
+	 * This is used to have two different bandwidths when finding maximum.
+	 * 
+	 * @param input
+	 * @param leftBandwidth
+	 * @param rightBandwidth
+	 * @return
+	 */
+	public Integer findMax(Queue<Double> input, int leftBandwidth,
+			int rightBandwidth) {
+		int size = input.size();
+		Object[] inputArray = input.toArray();
+		for (int i = (size - rightBandwidth) - 1; i >= leftBandwidth; --i) {
+			Double max = Double.MIN_VALUE;
+			for (int j = i - leftBandwidth; j <= i + rightBandwidth; ++j) {
+				if ((Double) inputArray[j] > max) {
+					max = (Double) inputArray[j];
+				}
+			}
 
-            if((Double)inputArray[i]==min){
-                return i;
-            }
+			if ((Double) inputArray[i] == max) {
+				return i;
+			}
 
-        }
-        return null;
-    }
+		}
+		return null;
+	}
 
+	/**
+	 * This is used to have two different bandwidths when finding minimum.
+	 * 
+	 * @param input
+	 * @param leftBandwidth
+	 * @param rightBandwidth
+	 * @return
+	 */
+	public Integer findMin(Queue<Double> input, int leftBandwidth,
+			int rightBandwidth) {
+		int size = input.size();
+		Object[] inputArray = input.toArray();
+		for (int i = (size - rightBandwidth) - 1; i >= leftBandwidth; --i) {
+			Double min = Double.MAX_VALUE;
+			for (int j = i - leftBandwidth; j <= i + rightBandwidth; ++j) {
+				if ((Double) inputArray[j] < min) {
+					min = (Double) inputArray[j];
+				}
+			}
 
-    /**
- *
- * @param s Queue
- * @return Index of the position of where the maximum value contains
- */
-	public int maxIndex(Queue<Double> s,Integer pos, Integer window) {
+			if ((Double) inputArray[i] == min) {
+				return i;
+			}
+
+		}
+		return null;
+	}
+
+	/**
+	 * 
+	 * @param s
+	 *            Queue
+	 * @return Index of the position of where the maximum value contains
+	 */
+	public int maxIndex(Queue<Double> s, Integer pos, Integer window) {
 		Iterator<Double> itr = s.iterator();
 		Double m = Double.MIN_VALUE;
 		int index = 0;
 		int i = 0;
 		while (itr.hasNext()) {
 			Double nxt = itr.next();
-			if ((i<=pos+window)&&(i>=pos-window)&&(m < nxt)) {
+			if ((i <= pos + window) && (i >= pos - window) && (m < nxt)) {
 				m = nxt;
 				index = i;
 			}
@@ -220,19 +247,21 @@ public class Helper {
 		// log.info(m);
 		return index;
 	}
-/**
- * 
- * @param s Queue
- * @return minimum index
- */
-	public int minIndex(Queue<Double> s,Integer pos, Integer window) {
+
+	/**
+	 * 
+	 * @param s
+	 *            Queue
+	 * @return minimum index
+	 */
+	public int minIndex(Queue<Double> s, Integer pos, Integer window) {
 		Iterator<Double> itr = s.iterator();
 		Double m = Double.MAX_VALUE;
 		int index = 0;
 		int i = 0;
 		while (itr.hasNext()) {
 			Double nxt = itr.next();
-			if ((i<=pos+window)&&(i>=pos-window)&&(m > nxt)) {
+			if ((i <= pos + window) && (i >= pos - window) && (m > nxt)) {
 				m = nxt;
 				index = i;
 			}
@@ -242,30 +271,30 @@ public class Helper {
 		return index;
 	}
 
-//Kalman filter
-    private void measurementUpdate(){
-        K = (P + Q) / (P + Q + R);
-        P = R * (P + Q) / (R + P + Q);
-    }
+	// Kalman filter
+	private void measurementUpdate() {
+		K = (P + Q) / (P + Q + R);
+		P = R * (P + Q) / (R + P + Q);
+	}
 
-    public double update(double measurement){
-        measurementUpdate();
-        double result = X + (measurement - X) * K;
-        X = result;
+	public double update(double measurement) {
+		measurementUpdate();
+		double result = X + (measurement - X) * K;
+		X = result;
 
-        return result;
-    }
+		return result;
+	}
 
-    public Queue<Double> kalmanFilter(Queue<Double> input,double q,double r){
-        this.Q=q;
-        this.R=r;
-        Queue<Double> dataInput = input;
-        Queue<Double> dataOutput =new LinkedList<Double>();
-        int size =dataInput.size();
-        for(double d:dataInput){
-            dataOutput.add(update(d));
-        }
-        return dataOutput;
-    }
+	public Queue<Double> kalmanFilter(Queue<Double> input, double q, double r) {
+		this.Q = q;
+		this.R = r;
+		Queue<Double> dataInput = input;
+		Queue<Double> dataOutput = new LinkedList<Double>();
+		int size = dataInput.size();
+		for (double d : dataInput) {
+			dataOutput.add(update(d));
+		}
+		return dataOutput;
+	}
 
 }

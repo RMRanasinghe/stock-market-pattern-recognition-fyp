@@ -25,6 +25,7 @@ import org.wso2.siddhi.core.query.processor.window.WindowProcessor;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.expression.Variable;
+import org.wso2.siddhi.query.api.expression.constant.DoubleConstant;
 import org.wso2.siddhi.query.api.expression.constant.IntConstant;
 import org.wso2.siddhi.query.api.extension.annotation.SiddhiExtension;
 
@@ -37,11 +38,12 @@ public class CustomWindowExtensionKernelMax extends WindowProcessor {
 
 	String variable = "";
 	int variablePosition = 0;
-	int bw = 0;
+	double bw = 0;
 	int window = 0;
 	Queue<InEvent> eventStack = null;
 	Queue<Double> priceStack = null;
 	Queue<InEvent> uniqueQueue = null;
+	Helper helper = null;
 
 	// TODO:uses for debugging. should remove
 	int dateVariablePosition = 0;
@@ -118,10 +120,17 @@ public class CustomWindowExtensionKernelMax extends WindowProcessor {
 										// size
 			log.error("Parameters count is not matching, There should be two parameters ");
 		}
+
 		variable = ((Variable) expressions[0]).getAttributeName();
-		bw = ((IntConstant) expressions[1]).getValue();
 		window = ((IntConstant) expressions[2]).getValue();
 
+		try {
+			bw = ((DoubleConstant) expressions[1]).getValue();
+		} catch (Exception e) {
+			bw = ((IntConstant) expressions[1]).getValue();
+		}
+
+		helper = new Helper();
 		eventStack = new LinkedList<InEvent>();
 		priceStack = new LinkedList<Double>();
 		uniqueQueue = new LinkedList<InEvent>();
@@ -134,7 +143,6 @@ public class CustomWindowExtensionKernelMax extends WindowProcessor {
 
 	private void doProcessing(InEvent event) {
 		Double eventKey = (Double) event.getData(variablePosition);
-		Helper helper = new Helper();
 
 		if (eventStack.size() < window) {
 			eventStack.add(event);
@@ -148,16 +156,21 @@ public class CustomWindowExtensionKernelMax extends WindowProcessor {
 			Integer maxPos = helper.findMax(output, 1);
 			if (maxPos != null) {
 				// TODO:remove hard coded values
-				Integer maxPosEvnt = helper.findMax(priceStack, window/5,window/3);
-				
-				//TODO:remove following comment - debug purpose.
-//				if(maxPosEvnt!=null){
-//				log.info(maxPos+"-----------max---------"+maxPosEvnt);
-//				log.info(eventStack.toArray()[maxPosEvnt]);
-//				}
-				
-				
-				if (maxPosEvnt != null && maxPosEvnt - maxPos <= window/5 && maxPos-maxPosEvnt <= window/2) {// maxPosEvent - 1 due to findmax find one point delay.
+				Integer maxPosEvnt = helper.findMax(priceStack, window / 5,
+						window / 3);
+
+				// TODO:remove following comment - debug purpose.
+				// if(maxPosEvnt!=null){
+				// log.info(maxPos+"-----------max---------"+maxPosEvnt);
+				// log.info(eventStack.toArray()[maxPosEvnt]);
+				// }
+
+				if (maxPosEvnt != null && maxPosEvnt - maxPos <= window / 5
+						&& maxPos - maxPosEvnt <= window / 2) {// maxPosEvent -
+																// 1 due to
+																// findmax find
+																// one point
+																// delay.
 					InEvent maximumEvent = (InEvent) eventStack.toArray()[maxPosEvnt];
 					if (!uniqueQueue.contains(maximumEvent)) {
 						// TODO:remove hard coded values
@@ -167,18 +180,18 @@ public class CustomWindowExtensionKernelMax extends WindowProcessor {
 						uniqueQueue.add(maximumEvent);
 
 						// TODO:uses for debugging. Should remove
-						log.info("***max***  Window:"
-								+ ((InEvent) eventStack.toArray()[0])
-										.getData(dateVariablePosition)
-								+ "-"
-								+ ((InEvent) eventStack.toArray()[eventStack
-										.size() - 1])
-										.getData(dateVariablePosition)
-								+ "    max pos:"
-								+ maximumEvent.getData(dateVariablePosition)
-								+ "    max val:"
-								+ maximumEvent.getData(variablePosition));
-						log.info(eventStack.toArray()[maxPosEvnt]);
+						// log.info("***max***  Window:"
+						// + ((InEvent) eventStack.toArray()[0])
+						// .getData(dateVariablePosition)
+						// + "-"
+						// + ((InEvent) eventStack.toArray()[eventStack
+						// .size() - 1])
+						// .getData(dateVariablePosition)
+						// + "    max pos:"
+						// + maximumEvent.getData(dateVariablePosition)
+						// + "    max val:"
+						// + maximumEvent.getData(variablePosition));
+						// log.info(eventStack.toArray()[maxPosEvnt]);
 
 						nextProcessor.process(maximumEvent);
 
