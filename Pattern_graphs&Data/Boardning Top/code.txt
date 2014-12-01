@@ -1,0 +1,24 @@
+from inputStream#window.custom:kernelMax(price,4,17)
+select *
+insert into maxStream;
+
+from inputStream#window.custom:kernelMin(price,4,17)
+select *
+insert into minStream;
+
+from max1=maxStream,min1=minStream,max2=maxStream,min2=minStream,max3=maxStream[
+  max1.price<max2.price
+  and max2.price<max3.price
+  and min1.price>min2.price
+  ]
+select max1.date as firstMax,min1.date as firstMin, max2.date as secondMax,min2.date as secondMin,max3.date as thirdMax,min2.price as breakPrice
+insert into patternBeforeBreak;
+
+from incompletePattern1 = patternBeforeBreak,
+	breakLow = inputStream[price > patternBeforeBreak.breakPrice]*,	
+	breakHigh = inputStream[price < patternBeforeBreak.breakPrice]*,
+	confirm=inputStream[price>breakHigh.price]
+select incompletePattern1.firstMax as firstMax,incompletePattern1.firstMin as firstMin, incompletePattern1.secondMax as secondMax,
+incompletePattern1.secondMin as secondMin, incompletePattern1.thirdMax as thirdMax, breakHigh.date as breakPoint
+insert into pattern;
+
