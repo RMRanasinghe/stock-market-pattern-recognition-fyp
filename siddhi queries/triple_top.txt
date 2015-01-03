@@ -1,0 +1,34 @@
+from inputStream#window.custom:kernelMin(price,3,16)
+select *
+insert into minStream;
+
+from inputStream#window.custom:kernelMax(price,3,16)
+select *
+insert into maxStream;
+
+from max1=maxStream,
+	min1=minStream,
+	max2=maxStream, 
+	min2=minStream, 
+	max3=maxStream[max1.price > ((1-0.025)*(max1.price+max2.price+price)/3) 
+				   and max2.price > ((1-0.025)*(max1.price+max2.price+price)/3) 
+				   and price > ((1-0.025)*(max1.price+max2.price+price)/3)
+				   and max1.price < ((1+0.025)*(max1.price+max2.price+price)/3) 
+				   and max2.price < ((1+0.025)*(max1.price+max2.price+price)/3) 
+				   and price < ((1+0.025)*(max1.price+max2.price+price)/3)]
+select max1.date as firstMax, 
+	max2.date as secondMax, 
+	max3.date as thirdMax,
+	custom:min(min1.price,min2.price) as minimumMin,
+	custom:min(max1.price,max2.price,max3.price) as minimumMax
+insert into patternBeforeBreak;
+
+from incompletePattern = patternBeforeBreak,
+	breakLow = inputStream[price < incompletePattern.minimumMax and price > incompletePattern.minimumMin]*,	
+	breakHigh = inputStream[price < incompletePattern.minimumMin]
+select incompletePattern.firstMax as firstMax, incompletePattern.secondMax as secondMax, incompletePattern.thirdMax as thirdMax, breakHigh.date as breakPoint
+insert into ttpattern
+                    
+                    
+                    
+                    

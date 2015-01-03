@@ -24,7 +24,7 @@ saveWindowPlotKalman <- function (input,window){
 		saveName = paste0('plot',i,'.jpeg')
 		jpeg(file=saveName)
 		plot(input, type='l')
-		lines(c(i:(i+window-1)),kalmanFilter(input[i:(i+window)]),0.000001,0.0001)
+		lines(c(i:(i+window-1)),kalmanFilter(input[i:(i+window)],0.000001,0.0001))
 		dev.off()
 	}
 }

@@ -78,7 +78,7 @@ public class Helper {
 		Queue<Double> output = null;
 
 		if (kernelValues == null) {
-			kernelValues = new double[input.size()+1];
+			kernelValues = new double[input.size()+2];
 			for (int i = 0; i <= input.size(); ++i) {
 				kernelValues[i] = gaussianKernel(i);
 			}
