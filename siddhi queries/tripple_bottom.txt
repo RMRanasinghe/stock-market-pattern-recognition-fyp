@@ -68,6 +68,38 @@ from incompletePattern = patternBeforeBreak,
 	breakHigh = inputStream[price > incompletePattern.maximumMax]
 select incompletePattern.firstMin as firstMin, incompletePattern.secondMin as secondMin, incompletePattern.thirdMin as thirdMin, breakHigh.date as breakPoint
 insert into pattern
+
+
+***************************Tripple bottom Transformer**********************
+from inputStream#transform.custom:kernelMinMax(price,13,50)
+select *
+insert into minmaxStream;
+
+from min1=minmaxStream[extremaType=="min"],
+	max1=minmaxStream[extremaType=="max"],
+	min2=minmaxStream[extremaType=="min"], 
+	max2=minmaxStream[extremaType=="max"], 
+	min3=minmaxStream[extremaType=="min"
+				   and min1.price > ((1-0.015)*(min1.price+min2.price+price)/3) 
+				   and min2.price > ((1-0.015)*(min1.price+min2.price+price)/3) 
+				   and price > ((1-0.015)*(min1.price+min2.price+price)/3)
+				   and min1.price < ((1+0.015)*(min1.price+min2.price+price)/3) 
+				   and min2.price < ((1+0.015)*(min1.price+min2.price+price)/3) 
+				   and price < ((1+0.015)*(min1.price+min2.price+price)/3)]
+select min1.date as firstMin, 
+	min2.date as secondMin, 
+	min3.date as thirdMin,
+	custom:max(min1.price,min2.price,min3.price) as maximumMin,
+	custom:max(max1.price,max2.price) as maximumMax
+insert into patternBeforeBreak;
+
+from incompletePattern = patternBeforeBreak,
+	breakLow = inputStream[price < incompletePattern.maximumMax and price > incompletePattern.maximumMin]*,	
+	breakHigh = inputStream[price > incompletePattern.maximumMax]
+select incompletePattern.firstMin as firstMin, incompletePattern.secondMin as secondMin, incompletePattern.thirdMin as thirdMin, breakHigh.date as breakPoint
+insert into pattern
+                    
+                    
                     
                     
                     
