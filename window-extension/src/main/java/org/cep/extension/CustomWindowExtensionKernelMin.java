@@ -1,4 +1,4 @@
-package org.test.cep.extension;
+package org.cep.extension;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.StreamEvent;

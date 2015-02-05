@@ -1,4 +1,4 @@
-package org.test.cep.extension;
+package org.cep.extension;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -25,24 +25,29 @@ import org.wso2.siddhi.core.query.processor.window.WindowProcessor;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.expression.Variable;
+import org.wso2.siddhi.query.api.expression.constant.DoubleConstant;
 import org.wso2.siddhi.query.api.expression.constant.IntConstant;
 import org.wso2.siddhi.query.api.extension.annotation.SiddhiExtension;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Queue;
 
-@SiddhiExtension(namespace = "custom", function = "ruleMin")
-public class CustomWindowExtensionMin extends WindowProcessor {
+@SiddhiExtension(namespace = "custom", function = "kalmanMax")
+public class CustomWindowExtensionKalmanMax extends WindowProcessor {
 
 	String variable = "";
 	int variablePosition = 0;
-	int bwl = 0;
-	int bwr = 0;
-	Map<Object, InEvent> uniqueWindow = null;
+	int bw = 0;
+	int window = 0;
 	Queue<InEvent> eventStack = null;
 	Queue<Double> priceStack = null;
+	Queue<InEvent> uniqueQueue = null;
+	double Q = 0.000001;
+	double R = 0.0001;
+
+	// TODO:uses for debugging. should remove
+	int dateVariablePosition = 0;
 
 	@Override
 	/**
@@ -93,7 +98,7 @@ public class CustomWindowExtensionMin extends WindowProcessor {
 	 * This method used to return the current state of the window, Used for persistence of data
 	 */
 	protected Object[] currentState() {
-		return new Object[] { uniqueWindow };
+		return new Object[] { eventStack };
 	}
 
 	@Override
@@ -112,39 +117,73 @@ public class CustomWindowExtensionMin extends WindowProcessor {
 			AbstractDefinition abstractDefinition, String s, boolean b,
 			SiddhiContext siddhiContext) {
 
-		if (expressions.length != 3) {
+		if (expressions.length != 2) {// price variable name, bandwidth, window
+										// size
 			log.error("Parameters count is not matching, There should be two parameters ");
 		}
 		variable = ((Variable) expressions[0]).getAttributeName();
-		bwl = ((IntConstant) expressions[1]).getValue();
-		bwr = ((IntConstant) expressions[2]).getValue();
-		
+		// bw = ((IntConstant) expressions[1]).getValue();
+		Q = ((DoubleConstant) expressions[1]).getValue();
+		R = ((DoubleConstant) expressions[2]).getValue();
+		window = ((IntConstant) expressions[3]).getValue();
+
 		eventStack = new LinkedList<InEvent>();
 		priceStack = new LinkedList<Double>();
+		uniqueQueue = new LinkedList<InEvent>();
 		variablePosition = abstractDefinition.getAttributePosition(variable);
-		
+
+		// TODO:for debugging. Should remove
+		dateVariablePosition = abstractDefinition.getAttributePosition("date");
+
 	}
 
 	private void doProcessing(InEvent event) {
-		Double eventKey = (Double)event.getData(variablePosition);
+		Double eventKey = (Double) event.getData(variablePosition);
 		Helper helper = new Helper();
-		//log.info(eventKey+10000);
-		if(eventStack.size()< (bwl+bwr)){
+
+		if (eventStack.size() < window) {
 			eventStack.add(event);
 			priceStack.add(eventKey);
-		}
-		else{
+		} else {
 			eventStack.add(event);
 			priceStack.add(eventKey);
-			//TODO:Double equivalence check
-			if(helper.min(priceStack)==priceStack.toArray()[bwl]){
-				nextProcessor.process((InEvent)eventStack.toArray()[bwl]);
+
+			Queue<Double> output = helper.kalmanFilter(priceStack, Q, R);
+			// TODO:remove hard coded values
+			Integer maxPos = helper.findMax(output, 2);
+			if (maxPos != null) {
+				// TODO:remove hard coded values
+				Integer maxPosEvnt = helper.findMax(priceStack, 10);
+				if (maxPosEvnt != null) {
+					InEvent maximumEvent = (InEvent) eventStack.toArray()[maxPosEvnt];
+					if (!uniqueQueue.contains(maximumEvent)) {
+						// TODO:remove hard coded values
+						if (uniqueQueue.size() > 5) {
+							uniqueQueue.remove();
+						}
+						uniqueQueue.add(maximumEvent);
+						// TODO:uses for debugging. Should remove
+						log.info("***max***  Window:"
+								+ ((InEvent) eventStack.toArray()[0])
+										.getData(dateVariablePosition)
+								+ "-"
+								+ ((InEvent) eventStack.toArray()[eventStack
+										.size() - 1])
+										.getData(dateVariablePosition)
+								+ "    max pos:"
+								+ maximumEvent.getData(dateVariablePosition)
+								+ "    max val:"
+								+ maximumEvent.getData(variablePosition));
+						nextProcessor.process(maximumEvent);
+
+					}
+				}
+
 			}
 			eventStack.remove();
 			priceStack.remove();
-			
+
 		}
-		//nextProcessor.process(event);
 
 	}
 

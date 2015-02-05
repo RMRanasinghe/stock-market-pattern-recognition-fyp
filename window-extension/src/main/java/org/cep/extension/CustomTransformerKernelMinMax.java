@@ -1,4 +1,4 @@
-package org.test.cep.extension;
+package org.cep.extension;
 
 import java.util.LinkedList;
 import java.util.List;
